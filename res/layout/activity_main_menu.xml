@@ -2,13 +2,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/mainMenuBGColour"
     tools:context=".MainMenuActivity" >
 
+    <ImageView
+        android:id="@+id/imageViewLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="14dp"
+        android:contentDescription="@string/logoDesc"
+        android:src="@drawable/logo" />
+
     <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="@string/lblTxtCopyright"
+        android:textAppearance="?android:attr/textAppearanceLargeInverse" />
+
+    <Button
+        android:id="@+id/btnHighScores"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnConfig"
+        android:layout_centerHorizontal="true"
+        android:text="@string/btnTxtHighScores" />
+
+    <Button
+        android:id="@+id/btnConfig"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="@string/hello_world" />
+        android:background="@android:drawable/btn_default_holo_light"
+        android:text="@string/btnTxtConfigGame" />
 
 </RelativeLayout>

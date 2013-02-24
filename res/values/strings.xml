@@ -4,5 +4,9 @@
     <string name="app_name">Tank Game</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
+    <string name="btnTxtConfigGame">Configure and Start Game</string>
+    <string name="logoDesc">Tank Game logo</string>
+    <string name="lblTxtCopyright">Tank Game Team © 2013</string>
+    <string name="btnTxtHighScores">High Scores</string>
 
 </resources>
