@@ -22,6 +22,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="edu.asu.tankgame.HighScoresActivity"
+            android:label="@string/title_activity_high_scores"
+            android:parentActivityName="edu.asu.tankgame.MainMenuActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.asu.tankgame.MainMenuActivity" />
+        </activity>
     </application>
 
 </manifest>

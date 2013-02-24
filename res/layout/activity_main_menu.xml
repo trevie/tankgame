@@ -30,6 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/btnConfig"
         android:layout_centerHorizontal="true"
+        android:onClick="showHighScores"
         android:text="@string/btnTxtHighScores" />
 
     <Button
@@ -38,7 +39,6 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:background="@android:drawable/btn_default_holo_light"
         android:text="@string/btnTxtConfigGame" />
 
 </RelativeLayout>
