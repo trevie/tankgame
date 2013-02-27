@@ -13,6 +13,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="14dp"
         android:contentDescription="@string/logoDesc"
+        android:scaleType="fitCenter"
         android:src="@drawable/logo" />
 
     <TextView
