@@ -10,5 +10,6 @@
     <string name="btnTxtHighScores">High Scores</string>
     <string name="lblTxtHighScores">High Scores</string>
     <string name="title_activity_high_scores">High Scores</string>
+    <string name="hello">Hi, there!</string>
 
 </resources>
