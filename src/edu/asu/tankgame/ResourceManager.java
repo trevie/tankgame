@@ -26,6 +26,7 @@ public class ResourceManager {
 	public ITextureRegion mBlankTextureRegion;
 	public ITextureRegion mTankTextureRegion;
 	public ITextureRegion mBarrelTextureRegion;
+	public ITextureRegion mPillarTextureRegion;
 	
 	public BitmapTextureAtlas mBitmapTextureAtlas;
 	
@@ -51,9 +52,10 @@ public class ResourceManager {
 		mRightCornerTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "right_corner_tile.png");
 		mLeftCornerTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "left_corner_tile.png");
 		mCenterTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "up_tile.png");
-		mRightTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "right_tile.png");
-		mLeftTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "left_tile.png");
+		mRightTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "right_full_tile.png");
+		mLeftTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "left_full_tile.png");
 		mBlankTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "blank_tile.png");
+		mPillarTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "pillar_tile.png");
 		
 		mTankTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "tank.png");
 		mBarrelTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "gun.png");
@@ -79,6 +81,8 @@ public class ResourceManager {
 		mBitmapTextureAtlas = (BuildableBitmapTextureAtlas) mRightTextureRegion.getTexture();
 		mBitmapTextureAtlas.unload();
 		mBitmapTextureAtlas = (BuildableBitmapTextureAtlas) mBlankTextureRegion.getTexture();
+		mBitmapTextureAtlas.unload();
+		mBitmapTextureAtlas = (BuildableBitmapTextureAtlas) mPillarTextureRegion.getTexture();
 		mBitmapTextureAtlas.unload();
 		mBitmapTextureAtlas = (BuildableBitmapTextureAtlas) mTankTextureRegion.getTexture();
 		mBitmapTextureAtlas.unload();

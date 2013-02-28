@@ -38,6 +38,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.asu.tankgame.MainMenuActivity" />
         </activity>
+        <activity android:name="PlayGameActivity" android:launchMode="standard" android:screenOrientation="landscape"></activity>
     </application>
 
 </manifest>

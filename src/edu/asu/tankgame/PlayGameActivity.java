@@ -8,6 +8,7 @@ import org.andengine.engine.options.resolutionpolicy.FixedResolutionPolicy;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.sprite.Sprite;
+import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.ui.activity.BaseGameActivity;
 
 import android.util.DisplayMetrics;
@@ -19,8 +20,7 @@ public class PlayGameActivity extends BaseGameActivity{
 	private int Height;
 	private int Width;
 	public Sprite[][] mLevelSprites;
-
-
+	
 	@Override
 	public EngineOptions onCreateEngineOptions()
 	{
@@ -52,61 +52,69 @@ public class PlayGameActivity extends BaseGameActivity{
 	{
 		// Create the scene object and background roughly sky colored
 		mScene = new Scene();
-		Background background = new Background(0f,0.5f,1f,1f);
+		Background background = new Background(0.45f,0.69f,0.85f,1f);
 		mScene.setBackground(background);
 		mScene.setBackgroundEnabled(true);
 		
-		short [] level = GameManager.getInstance().getLevel();
+		ITextureRegion temp = null;
+		boolean [][] level = GameManager.getInstance().getLevel();
 		
-		mLevelSprites =  new Sprite[Width/48][Height/48];
+		mLevelSprites =  new Sprite[level.length][level[0].length];
+		
 		for(int i = 0; i < mLevelSprites.length; i++)
 			for(int j = 0; j < mLevelSprites[i].length; j++)
-			{
-				if(level[i] >= j)
+			{				
+				if(level[i][j] == true)
 				{
-					// The tile is not located on the left or right most edge
-					if(i+1 != level.length && i-1 != -1)
+					temp = querryTile(i,j);
+					if(temp != null)
 					{
-						if(level[i] == j+1)
-						{
-							if(level[i-1] >= j && level[i+1] >= j)
-							{
-								mLevelSprites[i][j] = new Sprite(i*48, j*48, ResourceManager.getInstance().mBlankTextureRegion, mEngine.getVertexBufferObjectManager());
-								mScene.attachChild(mLevelSprites[i][j]);
-							}
-							
-						}
-						else
-						{							
-							// There are not tiles to the left or right, but one above
-							if(j > level[i-1] && j > level[i+1])
-							{
-								mLevelSprites[i][j] = new Sprite(i*48, j*48, ResourceManager.getInstance().mCenterTextureRegion, mEngine.getVertexBufferObjectManager());
-								mScene.attachChild(mLevelSprites[i][j]);
-							}
-							// There is a tile to the right and one above
-							else if(j < level[i-1] && j > level[i+1])
-							{
-								mLevelSprites[i][j] = new Sprite(i*48, j*48, ResourceManager.getInstance().mLeftTextureRegion, mEngine.getVertexBufferObjectManager());
-								mScene.attachChild(mLevelSprites[i][j]);
-							}
-							else if(j > level[i-1] && j < level[i+1])
-							{
-								mLevelSprites[i][j] = new Sprite(i*48, j*48, ResourceManager.getInstance().mRightTextureRegion, mEngine.getVertexBufferObjectManager());
-								mScene.attachChild(mLevelSprites[i][j]);
-							}
-							else
-							{
-								mLevelSprites[i][j] = new Sprite(i*48, j*48, ResourceManager.getInstance().mBlankTextureRegion, mEngine.getVertexBufferObjectManager());
-								mScene.attachChild(mLevelSprites[i][j]);
-							}
-						}
+						mLevelSprites[i][j] = new Sprite((i*48),Height - (j*48), temp, mEngine.getVertexBufferObjectManager());
+						mScene.attachChild(mLevelSprites[i][j]);
 					}
 				}
 			}
-		
 		// Notify the callback that we've finished creating the scene
 		pOnCreateSceneCallback.onCreateSceneFinished(mScene);
+	}
+	
+	public ITextureRegion querryTile(int x, int y)
+	{
+		ITextureRegion temp = null;
+		boolean above;
+		boolean left;
+		boolean right;
+		boolean [][] level = GameManager.getInstance().getLevel();
+
+		if(y+1 == level[x].length)
+			above = false;
+		else
+			above = level[x][y+1];
+		if(x == 0)
+			left = false;
+		else
+			left = level[x-1][y];
+		if(x+1 == level.length)
+			right = false;
+		else
+			right = level[x+1][y];
+		
+		if(above == false && left == true && right == true)
+			temp = ResourceManager.getInstance().mCenterTextureRegion;
+		else if(above == false && left == false && right == true)
+			temp = ResourceManager.getInstance().mLeftCornerTextureRegion;
+		else if(above == false && left == true && right == false)
+			temp = ResourceManager.getInstance().mRightCornerTextureRegion;
+		else if(above == true && left == false && right == true)
+			temp = ResourceManager.getInstance().mLeftTextureRegion;
+		else if(above == true && left == true && right == false)
+			temp = ResourceManager.getInstance().mRightTextureRegion;
+		else if(above == true && left == false && right == false)
+			temp = ResourceManager.getInstance().mPillarTextureRegion;
+		else if(above == true && left == true && right == true)
+			temp = ResourceManager.getInstance().mBlankTextureRegion;
+		
+		return temp;
 	}
 	
 	@Override

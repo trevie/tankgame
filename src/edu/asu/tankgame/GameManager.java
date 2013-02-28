@@ -4,7 +4,7 @@ public class GameManager {
 
 	private static GameManager INSTANCE;
 	
-	private short [] level;
+	private boolean [][] level;
 	private int p1health;
 	private int p2health;
 	private int p3health;
@@ -27,30 +27,29 @@ public class GameManager {
 		return INSTANCE;
 	}
 	
-	public short[] generateLevel(int height, int width)
+	public boolean[][] generateLevel(int height, int width)
 	{
-		level = new short [width/48];
+		level = new boolean [(int) Math.ceil(width/48.0)][(int) Math.ceil(height/48.0)];
 		
 		// TODO Code for randomly generating level until then hard coded level		
+		int limit;
+		for(int i = 0; i < level.length; i++)
+			for(int j = 0; j < level[i].length; j++)
+				level[i][j] = false;
 		
-		for(int i = 0; i < level.length; i = i + 4)
+		for(int i = 0; i < level.length; i++)
 		{
-			level[i] = 6;
-			level[i+1] = 7;
-			level[i+2] = 8;
-			level[i+3] = 7;
-		}
-		if(level.length % 4 != 0)
-		{
-			for(int i = 0; i < level.length % 4; i++)
+			limit = (int) (Math.random() * Math.ceil(height/48.0));
+			for(int j = 0;j <= limit; j++)
 			{
-				level[level.length - 1 - i] = 6;
+				level[i][j] = true;
 			}
 		}
+
 		return this.level;
 	}
 	
-	public short[] getLevel()
+	public boolean[][] getLevel()
 	{
 		return level;
 	}
