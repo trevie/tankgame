@@ -5,19 +5,19 @@ public class GameManager {
 	private static GameManager INSTANCE;
 	
 	private boolean [][] level;
-	private int p1health;
-	private int p2health;
-	private int p3health;
-	private int p4health;
-	
-	private static final int initialPlayerHealth = 100;
+	private int[] playerHealth;
+	private int[] playerPosition;
+
+	public static final int maxPlayers = 4;	
+	public static final int initialPlayerHealth = 100;
 	
 	GameManager()
 	{
-		p1health = initialPlayerHealth;
-		p2health = initialPlayerHealth;
-		p3health = initialPlayerHealth;
-		p4health = initialPlayerHealth;
+		playerHealth = new int[maxPlayers];
+		playerPosition = new int[maxPlayers];
+		
+		for(int i = 0; i < maxPlayers; i++)
+			playerHealth[i] = initialPlayerHealth;
 	}
 	
 	public static GameManager getInstance(){
@@ -31,7 +31,14 @@ public class GameManager {
 	{
 		level = new boolean [(int) Math.ceil(width/48.0)][(int) Math.ceil(height/48.0)];
 		
-		// TODO Code for randomly generating level until then hard coded level		
+		// TODO Simple code for randomly generating level maybe change to a polynomial to create level.		
+//		Boolean allSet = false;
+//		while(allSet == false)
+//		{
+			for(int i = 0; i < maxPlayers; i++)
+				playerPosition[i] = (int) (Math.random() * level.length);
+//		}
+		
 		int limit;
 		for(int i = 0; i < level.length; i++)
 			for(int j = 0; j < level[i].length; j++)
@@ -39,7 +46,9 @@ public class GameManager {
 		
 		for(int i = 0; i < level.length; i++)
 		{
-			limit = (int) (Math.random() * Math.ceil(height/48.0));
+			limit = (int) (Math.random() * level[i].length);
+			if(limit < 2)
+				limit = 2;
 			for(int j = 0;j <= limit; j++)
 			{
 				level[i][j] = true;
@@ -54,44 +63,25 @@ public class GameManager {
 		return level;
 	}
 	
-	public int getP1Health()
+	public int getPlayerHealth(int player)
 	{
-		return this.p1health;
+		if(player > 0 && player <= maxPlayers)
+			return this.playerHealth[player - 1];
+		else
+			return 0;
 	}
 	
-	public int getP2Health()
+	public int getPlayerPosition(int player)
 	{
-		return this.p2health;
+		if(player > 0 && player <= maxPlayers)
+			return this.playerPosition[player - 1];
+		else
+			return 0;
 	}
 	
-	public int getP3Health()
+	public void damageP1(int player, int damage)
 	{
-		return this.p3health;
+		if(player > 0 && player <= maxPlayers)
+			playerHealth[player - 1] = playerHealth[player - 1] - damage;
 	}
-	
-	public int getP4Health()
-	{
-		return this.p4health;
-	}
-	
-	public void damageP1(int damage)
-	{
-		p1health = p1health - damage;
-	}
-	
-	public void damageP2(int damage)
-	{
-		p1health = p2health - damage;
-	}
-
-	public void damageP3(int damage)
-	{
-		p1health = p3health - damage;
-	}
-
-	public void damageP4(int damage)
-	{
-		p1health = p4health - damage;
-	}
-
 }

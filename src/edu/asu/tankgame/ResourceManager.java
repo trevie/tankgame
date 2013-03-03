@@ -20,6 +20,7 @@ public class ResourceManager {
 	
 	public ITextureRegion mRightCornerTextureRegion;
 	public ITextureRegion mLeftCornerTextureRegion;
+	public ITextureRegion mCenterCornerTextureRegion;
 	public ITextureRegion mCenterTextureRegion;
 	public ITextureRegion mLeftTextureRegion;
 	public ITextureRegion mRightTextureRegion;
@@ -51,6 +52,7 @@ public class ResourceManager {
 		
 		mRightCornerTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "right_corner_tile.png");
 		mLeftCornerTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "left_corner_tile.png");
+		mCenterCornerTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "center_corner_tile.png");
 		mCenterTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "up_tile.png");
 		mRightTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "right_full_tile.png");
 		mLeftTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "left_full_tile.png");
@@ -88,7 +90,9 @@ public class ResourceManager {
 		mBitmapTextureAtlas.unload();
 		mBitmapTextureAtlas = (BuildableBitmapTextureAtlas) mBarrelTextureRegion.getTexture();
 		mBitmapTextureAtlas.unload();
-		
+		mBitmapTextureAtlas = (BuildableBitmapTextureAtlas) mCenterCornerTextureRegion.getTexture();
+		mBitmapTextureAtlas.unload();
+
 		System.gc();
 	}
 	

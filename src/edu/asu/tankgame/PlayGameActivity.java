@@ -20,6 +20,7 @@ public class PlayGameActivity extends BaseGameActivity{
 	private int Height;
 	private int Width;
 	public Sprite[][] mLevelSprites;
+	public Sprite[] mPlayerSprites;
 	
 	@Override
 	public EngineOptions onCreateEngineOptions()
@@ -60,7 +61,9 @@ public class PlayGameActivity extends BaseGameActivity{
 		boolean [][] level = GameManager.getInstance().getLevel();
 		
 		mLevelSprites =  new Sprite[level.length][level[0].length];
-		
+		GameManager.getInstance();
+		mPlayerSprites = new Sprite[GameManager.maxPlayers];
+
 		for(int i = 0; i < mLevelSprites.length; i++)
 			for(int j = 0; j < mLevelSprites[i].length; j++)
 			{				
@@ -73,6 +76,19 @@ public class PlayGameActivity extends BaseGameActivity{
 						mScene.attachChild(mLevelSprites[i][j]);
 					}
 				}
+				else
+					mLevelSprites[i][j] = null;
+			}
+		
+			GameManager.getInstance();
+			for(int i = 0; i < GameManager.maxPlayers; i++)
+			{
+				int pp = GameManager.getInstance().getPlayerPosition(i+1);
+				for(int j = 1; j < mLevelSprites[pp].length; j++)
+					if(mLevelSprites[pp][j] == null)
+					{
+//						mPlayerSprites[i] = new 
+					} 
 			}
 		// Notify the callback that we've finished creating the scene
 		pOnCreateSceneCallback.onCreateSceneFinished(mScene);
@@ -86,14 +102,17 @@ public class PlayGameActivity extends BaseGameActivity{
 		boolean right;
 		boolean [][] level = GameManager.getInstance().getLevel();
 
+		// Check tile above
 		if(y+1 == level[x].length)
 			above = false;
 		else
 			above = level[x][y+1];
+		// Check tile to the left
 		if(x == 0)
 			left = false;
 		else
 			left = level[x-1][y];
+		// Check tile to the right
 		if(x+1 == level.length)
 			right = false;
 		else
@@ -113,6 +132,8 @@ public class PlayGameActivity extends BaseGameActivity{
 			temp = ResourceManager.getInstance().mPillarTextureRegion;
 		else if(above == true && left == true && right == true)
 			temp = ResourceManager.getInstance().mBlankTextureRegion;
+		else if(above == false && left == false && right == false)
+			temp = ResourceManager.getInstance().mCenterCornerTextureRegion;
 		
 		return temp;
 	}
