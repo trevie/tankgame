@@ -47,10 +47,10 @@ public class MainMenuActivity extends Activity {
 		// an Intent is an object that provides runtime binding between separate components (two activities in this case).
 		// They're usually, but not always, used to start another activity.
 		
-		//Intent intent = new Intent(this, WeaponSelectActivity.class);	// constructor takes Context then class to deliver intent to
-		/* Highjacked for quick launching and testing */
+		Intent intent = new Intent(this, WeaponSelectActivity.class);	// constructor takes Context then class to deliver intent to
+		/* Highjacked for quick launching and testing
 		Intent intent = new Intent(this, PlayGameActivity.class);
-		/**/
+		*/
 		String message = "Hi from main menu";
 		intent.putExtra(EXTRA_MESSAGE, message);
 		startActivity(intent);

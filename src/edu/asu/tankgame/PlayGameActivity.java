@@ -20,7 +20,7 @@ public class PlayGameActivity extends BaseGameActivity{
 	private int Height;
 	private int Width;
 	public Sprite[][] mLevelSprites;
-	public Sprite[] mPlayerSprites;
+	public Sprite[][] mPlayerSprites;
 	
 	@Override
 	public EngineOptions onCreateEngineOptions()
@@ -62,7 +62,7 @@ public class PlayGameActivity extends BaseGameActivity{
 		
 		mLevelSprites =  new Sprite[level.length][level[0].length];
 		GameManager.getInstance();
-		mPlayerSprites = new Sprite[GameManager.maxPlayers];
+		mPlayerSprites = new Sprite[2][GameManager.maxPlayers];
 
 		for(int i = 0; i < mLevelSprites.length; i++)
 			for(int j = 0; j < mLevelSprites[i].length; j++)
@@ -84,13 +84,16 @@ public class PlayGameActivity extends BaseGameActivity{
 			for(int i = 0; i < GameManager.maxPlayers; i++)
 			{
 				int pp = GameManager.getInstance().getPlayerPosition(i+1);
-				for(int j = 1; j < mLevelSprites[pp].length; j++)
+				for(int j = mLevelSprites[pp].length-1; j >= 0; j--)
 					if(mLevelSprites[pp][j] == null)
 					{
-//						mPlayerSprites[i] = new 
+						mPlayerSprites[0][i] = new Sprite((pp*48),Height - (j*48) + 20, ResourceManager.getInstance().mTankTextureRegion, mEngine.getVertexBufferObjectManager());
+						mPlayerSprites[1][i] = new Sprite((pp*48) + 24,Height - (j*48) + 28, ResourceManager.getInstance().mBarrelTextureRegion, mEngine.getVertexBufferObjectManager());
 					} 
+				mScene.attachChild(mPlayerSprites[1][i]);
+				mScene.attachChild(mPlayerSprites[0][i]);
 			}
-		// Notify the callback that we've finished creating the scene
+			// Notify the callback that we've finished creating the scene
 		pOnCreateSceneCallback.onCreateSceneFinished(mScene);
 	}
 	
