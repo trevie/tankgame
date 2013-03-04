@@ -2,5 +2,6 @@
 <resources>
     <color name="mainMenuBGColour">#000</color>
     <color name="btnBGColour">#888</color>
+    <color name="white">#FFF</color>
     
 </resources>

@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
@@ -15,6 +15,12 @@
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+    
+    <style name="ListView">
+    	<!--  <item name="android:background">@color/white</item>
+    	<item name="android:cacheColorHint">@color/off_white</item>-->
+    	<item name="android:foreground">@color/white</item>
     </style>
 
 </resources>

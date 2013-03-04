@@ -25,15 +25,16 @@
         <activity
             android:name="edu.asu.tankgame.HighScoresActivity"
             android:label="@string/title_activity_high_scores"
-            android:parentActivityName="edu.asu.tankgame.MainMenuActivity" >
+            >
+            <!-- android:parentActivityName="edu.asu.tankgame.MainMenuActivity" -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.asu.tankgame.MainMenuActivity" />
         </activity>
         <activity
             android:name="edu.asu.tankgame.WeaponSelectActivity"
-            android:label="@string/title_activity_weapon_select"
-            android:parentActivityName="edu.asu.tankgame.MainMenuActivity" >
+            android:label="@string/title_activity_weapon_select" >
+            <!-- android:parentActivityName="edu.asu.tankgame.MainMenuActivity" > -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.asu.tankgame.MainMenuActivity" />

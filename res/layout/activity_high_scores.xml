@@ -26,13 +26,15 @@
         android:layout_height="wrap_content"
         android:text="Delete First"
         android:onClick="onClick"/>
-    
+
     <ListView
-        android:id="@+id/list"
+        android:id="@android:id/list"
+        style="@style/ListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hello"
-    />
-    
+        android:background="@color/white"
+        android:text="@string/hello" >
+
+    </ListView>
 
 </LinearLayout>

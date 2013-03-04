@@ -35,7 +35,7 @@ public class HighScoresActivity extends ListActivity {
 		List<Comment> values = datasource.getAllComments();
 		
 		// Use the SimpleCursorAdapter to show the elements in a ListView
-		ArrayAdapter<Comment> adapter = new ArrayAdapter<Comment>(this, android.R.layout.simple_list_item_1, values);
+		ArrayAdapter<Comment> adapter = new ArrayAdapter<Comment>(this, android.R.layout.simple_list_item_1, values); // android.R.layout.simple_list_item_1 is a common default
 		setListAdapter(adapter);
 		
 	}
@@ -46,6 +46,7 @@ public class HighScoresActivity extends ListActivity {
 		@SuppressWarnings("unchecked")
 		ArrayAdapter<Comment> adapter = (ArrayAdapter<Comment>) getListAdapter();
 		Comment comment = null;
+		/*
 		switch (view.getId())
 		{
 			case R.id.add:
@@ -63,6 +64,21 @@ public class HighScoresActivity extends ListActivity {
 					adapter.remove(comment);
 				}
 				break;
+		}
+		*/
+		if (view.getId() == R.id.add) {
+			String[] comments = new String[] { "Cool", "Very nice", "Hate it" };
+			int nextInt = new Random().nextInt(3);
+			// save the new comment to the database
+			comment = datasource.createComment(comments[nextInt]);
+			adapter.add(comment);
+		} else if (view.getId() == R.id.delete) {
+			if (getListAdapter().getCount() > 0)
+			{
+				comment = (Comment) getListAdapter().getItem(0);
+				datasource.deleteComment(comment);
+				adapter.remove(comment);
+			}
 		}
 		adapter.notifyDataSetChanged();
 	}
