@@ -66,13 +66,16 @@ public class HighScoresActivity extends ListActivity {
 				break;
 		}
 		*/
+		// ADD button
 		if (view.getId() == R.id.add) {
-			String[] comments = new String[] { "Cool", "Very nice", "Hate it" };
+			String[] comments = new String[] { "Drew", "Ben", "Michael" };
 			int nextInt = new Random().nextInt(3);
 			// save the new comment to the database
 			comment = datasource.createComment(comments[nextInt]);
 			adapter.add(comment);
-		} else if (view.getId() == R.id.delete) {
+		}
+		else if (view.getId() == R.id.delete) // DELETE button
+		{
 			if (getListAdapter().getCount() > 0)
 			{
 				comment = (Comment) getListAdapter().getItem(0);
