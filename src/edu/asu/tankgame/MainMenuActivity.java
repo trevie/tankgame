@@ -48,9 +48,9 @@ public class MainMenuActivity extends Activity {
 		// They're usually, but not always, used to start another activity.
 		
 		Intent intent = new Intent(this, WeaponSelectActivity.class);	// constructor takes Context then class to deliver intent to
-		/* Highjacked for quick launching and testing
-		Intent intent = new Intent(this, PlayGameActivity.class);
-		*/
+		// Highjacked for quick launching and testing
+		//Intent intent = new Intent(this, PlayGameActivity.class);
+		
 		String message = "Hi from main menu";
 		intent.putExtra(EXTRA_MESSAGE, message);
 		startActivity(intent);

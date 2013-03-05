@@ -90,8 +90,9 @@ public class PlayGameActivity extends BaseGameActivity{
 						mPlayerSprites[0][i] = new Sprite((pp*48),Height - (j*48) + 20, ResourceManager.getInstance().mTankTextureRegion, mEngine.getVertexBufferObjectManager());
 						mPlayerSprites[1][i] = new Sprite((pp*48) + 24,Height - (j*48) + 28, ResourceManager.getInstance().mBarrelTextureRegion, mEngine.getVertexBufferObjectManager());
 					} 
-				mScene.attachChild(mPlayerSprites[1][i]);
-				mScene.attachChild(mPlayerSprites[0][i]);
+				if(mPlayerSprites[1][i] != null && mPlayerSprites[0][i] != null)
+					mScene.attachChild(mPlayerSprites[1][i]);
+					mScene.attachChild(mPlayerSprites[0][i]);
 			}
 			// Notify the callback that we've finished creating the scene
 		pOnCreateSceneCallback.onCreateSceneFinished(mScene);
