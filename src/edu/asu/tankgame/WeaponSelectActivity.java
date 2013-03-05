@@ -4,12 +4,16 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.support.v4.app.NavUtils;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Build;
 
 public class WeaponSelectActivity extends Activity {
 
+	public final static String EXTRA_MESSAGE = "edu.asu.tankgame.message";	// a key for passing extras
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -52,4 +56,17 @@ public class WeaponSelectActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	public void playGame(View view)
+	{
+		// http://developer.android.com/training/basics/firstapp/starting-activity.html#BuildIntent
+		// an Intent is an object that provides runtime binding between separate components (two activities in this case).
+		// They're usually, but not always, used to start another activity.
+		
+		Intent intent = new Intent(this, PlayGameActivity.class);	// constructor takes Context then class to deliver intent to
+		String message = "Hi from weapon select menu";
+		intent.putExtra(EXTRA_MESSAGE, message);
+		startActivity(intent);
+		
+		
+	}
 }
