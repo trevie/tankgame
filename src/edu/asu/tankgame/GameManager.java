@@ -7,17 +7,28 @@ public class GameManager {
 	private boolean [][] level;
 	private int[] playerHealth;
 	private int[] playerPosition;
+	private int[] playerAngle;		// 0 is left pointing level, 180 is right pointing level
+	private int[] playerPower;
 
-	public static final int maxPlayers = 4;	
+	public static final int maxPlayers = 2;	
 	public static final int initialPlayerHealth = 100;
 	
 	GameManager()
 	{
 		playerHealth = new int[maxPlayers];
 		playerPosition = new int[maxPlayers];
+		playerAngle = new int[maxPlayers];
+		playerPower = new int[maxPlayers];
 		
 		for(int i = 0; i < maxPlayers; i++)
+		{
 			playerHealth[i] = initialPlayerHealth;
+			playerPower[i] = 50;
+			if(i%2 == 0)
+				playerAngle[i] = 180;
+			else
+				playerAngle[i] = 0;
+		}
 	}
 	
 	public static GameManager getInstance(){
@@ -35,9 +46,11 @@ public class GameManager {
 //		Boolean allSet = false;
 //		while(allSet == false)
 //		{
-			for(int i = 0; i < maxPlayers; i++)
-				playerPosition[i] = (int) (Math.random() * level.length);
+//			for(int i = 0; i < maxPlayers; i++)
+//				playerPosition[i] = (int) (Math.random() * level.length);
 //		}
+		playerPosition[0] = 2;
+		playerPosition[1] = level.length - 3;
 		
 		int limit;
 		for(int i = 0; i < level.length; i++)
@@ -46,7 +59,7 @@ public class GameManager {
 		
 		for(int i = 0; i < level.length; i++)
 		{
-			limit = (int) (Math.random() * level[i].length);
+			limit = (int) (Math.random() * (level[i].length - 2));
 			if(limit < 2)
 				limit = 2;
 			for(int j = 0;j <= limit; j++)
