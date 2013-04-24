@@ -28,6 +28,10 @@ public class ResourceManager {
 	public ITextureRegion mTankTextureRegion;
 	public ITextureRegion mBarrelTextureRegion;
 	public ITextureRegion mPillarTextureRegion;
+	public ITextureRegion mBarBGTextureRegion;
+	public ITextureRegion mBarLensTextureRegion;
+	public ITextureRegion mBarLineTextureRegion;
+	public ITextureRegion mHaloTextureRegion;
 	
 	public BitmapTextureAtlas mBitmapTextureAtlas;
 	
@@ -47,7 +51,7 @@ public class ResourceManager {
 		// Set our game assets folder in "assets/gfx/game/"
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
 		
-		BuildableBitmapTextureAtlas mBitmapTextureAtlas = new BuildableBitmapTextureAtlas(pEngine.getTextureManager(), 256, 256);
+		BuildableBitmapTextureAtlas mBitmapTextureAtlas = new BuildableBitmapTextureAtlas(pEngine.getTextureManager(), 512, 512);
 		
 		
 		mRightCornerTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "right_corner_tile.png");
@@ -61,6 +65,12 @@ public class ResourceManager {
 		
 		mTankTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "tank.png");
 		mBarrelTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "gun.png");
+		mHaloTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "halo.png");
+		
+		mBarBGTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "PowerBarBG.png");
+		mBarLensTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "PowerBarLens.png");
+		mBarLineTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "PowerBarLine.png");
+		
 		
 		try {
 			mBitmapTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 1));
