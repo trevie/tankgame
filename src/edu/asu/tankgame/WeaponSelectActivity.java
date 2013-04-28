@@ -1,24 +1,53 @@
 package edu.asu.tankgame;
 
-import android.os.Bundle;
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.support.v4.app.NavUtils;
-import android.annotation.TargetApi;
-import android.content.Intent;
-import android.os.Build;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
 public class WeaponSelectActivity extends Activity {
 
 	public final static String EXTRA_MESSAGE = "edu.asu.tankgame.message";	// a key for passing extras
+	ListView weaponsListView;
+	ArrayAdapter arrayAdapter;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_weapon_select);
 		// Show the Up button in the action bar.
+		weaponsListView = (ListView) findViewById(R.id.listView1);
+		String[] WeaponArray = new String[20];
+		for(int i=0; i < WeaponArray.length; i++){
+        	WeaponArray[i] = "Weapon " + i;
+        }
+		arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, WeaponArray)
+		{
+
+	        @Override
+	        public View getView(int position, View convertView,
+	                ViewGroup parent) {
+	            View view =super.getView(position, convertView, parent);
+
+	            TextView textView=(TextView) view.findViewById(android.R.id.text1);
+
+	            /*YOUR CHOICE OF COLOR*/
+	            textView.setTextColor(Color.RED);
+
+	            return view;
+	        }
+	    };
+		weaponsListView.setAdapter(arrayAdapter);
 		setupActionBar();
 	}
 

@@ -18,12 +18,15 @@
 
     <ListView
         android:id="@+id/listView1"
+        style="@style/ListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="0dp"
-        android:layout_marginTop="200dp" >
+        android:layout_marginTop="200dp"
+        android:contentDescription="?android:attr/listDivider"
+        android:divider="?android:attr/listDivider" >
 
     </ListView>
 
@@ -40,5 +43,7 @@
         android:text="Play"
         android:textColor="#ff00ff00"
         android:textColorHint="#ff00ff00" />
-
+    
+	
+	
 </RelativeLayout>
