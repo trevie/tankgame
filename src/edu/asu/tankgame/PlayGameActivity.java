@@ -112,7 +112,7 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		mScene.setBackground(background);
 		mScene.setBackgroundEnabled(true);
 		// parameters are StepsPerSecond, Gravity, AllowSleep, VelocityIterations, PositionIterations)
-		mPhysicsWorld = new FixedStepPhysicsWorld(30, new Vector2(0.0f, SensorManager.GRAVITY_EARTH), false, 3, 8);
+		mPhysicsWorld = new FixedStepPhysicsWorld(30, new Vector2(0.0f, SensorManager.GRAVITY_EARTH/2), false, 1, 1);
 		mScene.registerUpdateHandler(mPhysicsWorld); 
 		//SensorManager.GRAVITY_EARTH
 		//parameters are Density, Elasticity, Friction
@@ -442,7 +442,7 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 	public void fireBullet()
 	{
 		final FixtureDef TILE_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.50f, 0.0f, 1.0f);		
-		
+		GameManager gm = GameManager.getInstance();
 		// Sin(angle) * power = Y
 		// Cos(angle) * power = X
 		float firedAngle = GameManager.getInstance().getPlayerAngle();
@@ -453,8 +453,11 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		scalarX = (float) Math.cos(firedAngle);
 		scalarY = (float) Math.sin(firedAngle);
 		
-		float positionX = mPlayerSprites[0][GameManager.getInstance().getCurrentPlayer() - 1].getX() + 23;
-		float positionY = mPlayerSprites[0][GameManager.getInstance().getCurrentPlayer() - 1].getY() + 14;
+		float positionX = mPlayerSprites[0][gm.getCurrentPlayer() - 1].getX() + 23;
+		float positionY = mPlayerSprites[0][gm.getCurrentPlayer() - 1].getY() + 14;
+		
+		gm.togglePlayer();
+
 		
 		shellSprite = new Sprite( positionX + scalarX * 41, positionY - scalarY * 41, ResourceManager.getInstance().mShellTextureRegion, mEngine.getVertexBufferObjectManager());
 		shellSprite.setRotationCenter((float) (shellSprite.getWidth()/2.0f), (float)(shellSprite.getHeight()/2.0f));
@@ -462,8 +465,11 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		mScene.attachChild(shellSprite);
 		shellBody = PhysicsFactory.createBoxBody(this.mPhysicsWorld, shellSprite, BodyType.DynamicBody, TILE_FIXTURE_DEF);
 		mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(shellSprite, shellBody, true, true));
-		shellBody.applyLinearImpulse(scalarX * firedForce,scalarY * firedForce, shellBody.getWorldCenter().x, shellBody.getWorldCenter().y);
+//		shellBody.setWorldCenter(15,3);
 
-		GameManager.getInstance().togglePlayer();
+		shellBody.applyForce(new Vector2(scalarX * firedForce,scalarY * firedForce), new Vector2(shellBody.getWorldCenter().x, shellBody.getWorldCenter().y));
+
+		PowerBar[2].setY(16 + 208 * (100 - gm.getPlayerPower()/100));
+		AngleBar[2].setY(16 + 208 * (180 - gm.getPlayerAngle()/180));
 	}
 }

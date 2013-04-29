@@ -61,7 +61,11 @@ public class GameManager {
 		
 		for(int i = 0; i < level.length; i++)
 		{
-			limit = (int) (Math.random() * (level[i].length - 2));
+//			limit = (int) (Math.random() * (level[i].length - 2));
+			if(i != 2 && i != (level.length -3))
+				limit = 3;
+			else
+				limit = 7;
 			if(limit < 2)
 				limit = 2;
 			for(int j = 0;j <= limit; j++)

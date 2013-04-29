@@ -96,7 +96,23 @@ public class ResourceManager {
 		SoundFactory.setAssetBasePath("sfx/");
 		MusicFactory.setAssetBasePath("sfx/");
 		try {
-			mMusic = MusicFactory.createMusicFromAsset(pEngine.getMusicManager(), pContext, "insane.mp3");
+			double choice = Math.random() * 10;
+			if(choice < 3)
+			{
+				mMusic = MusicFactory.createMusicFromAsset(pEngine.getMusicManager(), pContext, "insane.mp3");
+			}
+			else if(choice < 6)
+			{
+				mMusic = MusicFactory.createMusicFromAsset(pEngine.getMusicManager(), pContext, "general.mp3");
+			}
+			else if(choice < 9)
+			{
+				mMusic = MusicFactory.createMusicFromAsset(pEngine.getMusicManager(), pContext, "villan.mp3");
+			}
+			else
+			{
+				mMusic = MusicFactory.createMusicFromAsset(pEngine.getMusicManager(), pContext, "fugue.mp3");
+			}
 			mMusic.setLooping(true);
 		} catch (IOException e)	{
 			Debug.e(e);
