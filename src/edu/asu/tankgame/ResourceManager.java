@@ -1,5 +1,10 @@
 package edu.asu.tankgame;
 
+import java.io.IOException;
+
+import org.andengine.audio.music.Music;
+import org.andengine.audio.music.MusicFactory;
+import org.andengine.audio.sound.SoundFactory;
 import org.andengine.engine.Engine;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
@@ -28,8 +33,14 @@ public class ResourceManager {
 	public ITextureRegion mTankTextureRegion;
 	public ITextureRegion mBarrelTextureRegion;
 	public ITextureRegion mPillarTextureRegion;
+	public ITextureRegion mBarBGTextureRegion;
+	public ITextureRegion mBarLensTextureRegion;
+	public ITextureRegion mBarLineTextureRegion;
+	public ITextureRegion mHaloTextureRegion;
 	
 	public BitmapTextureAtlas mBitmapTextureAtlas;
+	
+	public Music mMusic;
 	
 	ResourceManager(){
 		// The constructor is of no use to us
@@ -45,9 +56,8 @@ public class ResourceManager {
 
 	public synchronized void loadGameTextures(Engine pEngine, Context pContext){
 		// Set our game assets folder in "assets/gfx/game/"
-		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
-		
-		BuildableBitmapTextureAtlas mBitmapTextureAtlas = new BuildableBitmapTextureAtlas(pEngine.getTextureManager(), 256, 256);
+		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");	
+		BuildableBitmapTextureAtlas mBitmapTextureAtlas = new BuildableBitmapTextureAtlas(pEngine.getTextureManager(), 512, 512);
 		
 		
 		mRightCornerTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "right_corner_tile.png");
@@ -61,6 +71,12 @@ public class ResourceManager {
 		
 		mTankTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "tank.png");
 		mBarrelTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "gun.png");
+		mHaloTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "halo.png");
+		
+		mBarBGTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "PowerBarBG.png");
+		mBarLensTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "PowerBarLens.png");
+		mBarLineTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "PowerBarLine.png");
+		
 		
 		try {
 			mBitmapTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 1));
@@ -68,6 +84,23 @@ public class ResourceManager {
 		} catch (TextureAtlasBuilderException e) {
 			Debug.e(e);
 		}
+	}
+	
+	public synchronized void loadSounds(Engine pEngine, Context pContext)
+	{
+		SoundFactory.setAssetBasePath("sfx/");
+		MusicFactory.setAssetBasePath("sfx/");
+		try {
+			mMusic = MusicFactory.createMusicFromAsset(pEngine.getMusicManager(), pContext, "insane.mp3");
+			mMusic.setLooping(true);
+		} catch (IOException e)	{
+			Debug.e(e);
+		}
+	}
+	
+	public synchronized void unloadSounds()
+	{
+
 	}
 
 	public synchronized void unloadGameTextures(){

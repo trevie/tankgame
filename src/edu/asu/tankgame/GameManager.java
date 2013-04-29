@@ -7,8 +7,9 @@ public class GameManager {
 	private boolean [][] level;
 	private int[] playerHealth;
 	private int[] playerPosition;
-	private int[] playerAngle;		// 0 is left pointing level, 180 is right pointing level
-	private int[] playerPower;
+	private float[] playerAngle;		// 0 is left pointing level, 180 is right pointing level
+	private float[] playerPower;
+	private int currentPlayer;
 
 	public static final int maxPlayers = 2;	
 	public static final int initialPlayerHealth = 100;
@@ -17,17 +18,18 @@ public class GameManager {
 	{
 		playerHealth = new int[maxPlayers];
 		playerPosition = new int[maxPlayers];
-		playerAngle = new int[maxPlayers];
-		playerPower = new int[maxPlayers];
+		playerAngle = new float[maxPlayers];
+		playerPower = new float[maxPlayers];
+		currentPlayer = 0;
 		
 		for(int i = 0; i < maxPlayers; i++)
 		{
 			playerHealth[i] = initialPlayerHealth;
-			playerPower[i] = 50;
+			playerPower[i] = 75;
 			if(i%2 == 0)
-				playerAngle[i] = 180;
+				playerAngle[i] = 30;
 			else
-				playerAngle[i] = 0;
+				playerAngle[i] = 120;
 		}
 	}
 	
@@ -92,9 +94,65 @@ public class GameManager {
 			return 0;
 	}
 	
-	public void damageP1(int player, int damage)
+	public void damagePlayer(int player, int damage)
 	{
 		if(player > 0 && player <= maxPlayers)
 			playerHealth[player - 1] = playerHealth[player - 1] - damage;
+	}
+	
+	public float getPlayerAngle(int player)
+	{
+		if(player > 0 && player <= maxPlayers)
+			return this.playerAngle[player - 1];
+		else
+			return -1;		
+	}
+	
+	public boolean changePlayerAngle(int player, float angle)
+	{
+		if(player > 0 && player <= maxPlayers)
+		{
+			float originalPower = this.playerAngle[player -1];
+			this.playerAngle[player - 1] = this.playerAngle[player - 1] + angle;
+			if(this.playerAngle[player - 1] < 0)
+				this.playerAngle[player - 1] = 0;
+			else if(this.playerAngle[player - 1] > 180)
+				this.playerAngle[player - 1] = 180;
+			// This checks to see if there was a transition from left facing to right or vice versa.
+			if((originalPower <= 90) ^ (this.playerAngle[player - 1]  <= 90))
+				return true;
+		}
+		return false;
+	}
+
+	public float getPlayerPower(int player)
+	{
+		if(player > 0 && player <= maxPlayers)
+			return this.playerPower[player - 1];
+		else
+			return -1;		
+	}
+	
+	public void changePlayerPower(int player, float power)
+	{
+		if(player > 0 && player <= maxPlayers)
+		{
+			this.playerPower[player - 1] = this.playerPower[player - 1] + power;
+			if(this.playerPower[player - 1] < 0)
+				this.playerPower[player - 1] = 0;
+			else if(this.playerPower[player - 1] > 100)
+				this.playerPower[player - 1] = 100;
+		}
+	}
+
+	public void togglePlayer()
+	{
+		currentPlayer++;
+		currentPlayer%=maxPlayers;
+	}
+	
+	public int getCurrentPlayer()
+	{
+		return currentPlayer + 1;
 	}
 }
