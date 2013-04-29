@@ -8,7 +8,7 @@ public class GameManager {
 	private int[] playerHealth;
 	private int[] playerPosition;
 	private float[] playerAngle;		// 0 is left pointing level, 180 is right pointing level
-	private int[] playerPower;
+	private float[] playerPower;
 	private int currentPlayer;
 
 	public static final int maxPlayers = 2;	
@@ -19,13 +19,13 @@ public class GameManager {
 		playerHealth = new int[maxPlayers];
 		playerPosition = new int[maxPlayers];
 		playerAngle = new float[maxPlayers];
-		playerPower = new int[maxPlayers];
+		playerPower = new float[maxPlayers];
 		currentPlayer = 0;
 		
 		for(int i = 0; i < maxPlayers; i++)
 		{
 			playerHealth[i] = initialPlayerHealth;
-			playerPower[i] = 50;
+			playerPower[i] = 75;
 			if(i%2 == 0)
 				playerAngle[i] = 30;
 			else
@@ -112,7 +112,7 @@ public class GameManager {
 	{
 		if(player > 0 && player <= maxPlayers)
 		{
-			this.playerAngle[player - 1] = this.playerAngle[player - 1] - angle;
+			this.playerAngle[player - 1] = this.playerAngle[player - 1] + angle;
 			if(this.playerAngle[player - 1] < 0)
 				this.playerAngle[player - 1] = 0;
 			else if(this.playerAngle[player - 1] > 180)
@@ -128,11 +128,11 @@ public class GameManager {
 			return -1;		
 	}
 	
-	public void changePlayerPower(int player, int power)
+	public void changePlayerPower(int player, float power)
 	{
 		if(player > 0 && player <= maxPlayers)
 		{
-			this.playerPower[player - 1] = this.playerPower[player - 1] - power;
+			this.playerPower[player - 1] = this.playerPower[player - 1] + power;
 			if(this.playerPower[player - 1] < 0)
 				this.playerPower[player - 1] = 0;
 			else if(this.playerPower[player - 1] > 100)

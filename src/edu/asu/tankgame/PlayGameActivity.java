@@ -55,8 +55,8 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 	
 	public boolean isPowerTouch;
 	public boolean isAngleTouch;
-	public float startTouchX;
-	public float startTouchY;
+	public float lastTouchX;
+	public float lastTouchY;
 	
 	
 	@Override
@@ -235,7 +235,7 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 			
 		PowerBar[0] = new Sprite(0,Height - 256, ResourceManager.getInstance().mBarBGTextureRegion, mEngine.getVertexBufferObjectManager());
 		PowerBar[1] = new Sprite(0,0, ResourceManager.getInstance().mBarLensTextureRegion, mEngine.getVertexBufferObjectManager());
-		PowerBar[2] = new Sprite(16,16 + 224 * (GameManager.getInstance().getPlayerPower(GameManager.getInstance().getCurrentPlayer())/100), ResourceManager.getInstance().mBarLineTextureRegion, mEngine.getVertexBufferObjectManager());
+		PowerBar[2] = new Sprite(16,16 + 208 * (1 - GameManager.getInstance().getPlayerPower(GameManager.getInstance().getCurrentPlayer())/100), ResourceManager.getInstance().mBarLineTextureRegion, mEngine.getVertexBufferObjectManager());
 		PowerBar[0].setColor(1,1,1,0.5f);
 		PowerBar[0].attachChild(PowerBar[1]);
 		PowerBar[1].attachChild(PowerBar[2]);
@@ -243,7 +243,7 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		
 		AngleBar[0] = new Sprite(Width - 162,Height - 162, ResourceManager.getInstance().mBarBGTextureRegion, mEngine.getVertexBufferObjectManager());
 		AngleBar[1] = new Sprite(0,0, ResourceManager.getInstance().mBarLensTextureRegion, mEngine.getVertexBufferObjectManager());
-		AngleBar[2] = new Sprite(16, 16 + 224 * (GameManager.getInstance().getPlayerAngle(GameManager.getInstance().getCurrentPlayer())/180), ResourceManager.getInstance().mBarLineTextureRegion, mEngine.getVertexBufferObjectManager());
+		AngleBar[2] = new Sprite(16, 16 + 208 * (1 - GameManager.getInstance().getPlayerAngle(GameManager.getInstance().getCurrentPlayer())/180), ResourceManager.getInstance().mBarLineTextureRegion, mEngine.getVertexBufferObjectManager());
 		AngleBar[0].setColor(1,1,1,0.5f);
 		AngleBar[0].setRotationCenter(AngleBar[0].getWidth()/2, AngleBar[0].getHeight()/2);
 		AngleBar[0].setRotation(90);
@@ -253,6 +253,7 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 
 
 		// Notify the callback that we've finished creating the scene
+		mScene.setOnSceneTouchListener(this);
 		pOnCreateSceneCallback.onCreateSceneFinished(mScene);
 	}
 	
@@ -314,9 +315,9 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 
 	@Override
 	public void onAccelerationChanged(AccelerationData pAccelerationData) {
-		final Vector2 gravity = Vector2Pool.obtain(pAccelerationData.getX(), pAccelerationData.getY());
-		this.mPhysicsWorld.setGravity(gravity);
-		Vector2Pool.recycle(gravity);
+//		final Vector2 gravity = Vector2Pool.obtain(pAccelerationData.getX(), pAccelerationData.getY());
+//		this.mPhysicsWorld.setGravity(gravity);
+//		Vector2Pool.recycle(gravity);
 	}
 	
 	@Override
@@ -338,46 +339,68 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 	{
 		float tempX = pSceneTouchEvent.getX();
 		float tempY = pSceneTouchEvent.getY();
-		Log.w("Touch", "X:" + tempX + " Y:" + tempY );
-		if(pSceneTouchEvent.isActionDown())
-			Log.w("TouchType", "Down");
-		else if(pSceneTouchEvent.isActionUp())
-			Log.w("TouchType", "Up");
-		else if(pSceneTouchEvent.isActionMove())
-			Log.w("TouchType", "Move");
-		else if(pSceneTouchEvent.isActionCancel())
-			Log.w("TouchType", "Cancel");
-		else if(pSceneTouchEvent.isActionOutside())
-			Log.w("TouchType", "Outside");
-		
+		float startPower;
+		float startAngle;
+//		Log.w("Touch", "X:" + tempX + " Y:" + tempY );
+//		if(pSceneTouchEvent.isActionDown())
+//			Log.w("TouchType", "Down");
+//		else if(pSceneTouchEvent.isActionUp())
+//			Log.w("TouchType", "Up");
+//		else if(pSceneTouchEvent.isActionMove())
+//			Log.w("TouchType", "Move");
+//		else if(pSceneTouchEvent.isActionCancel())
+//			Log.w("TouchType", "Cancel");
+//		else if(pSceneTouchEvent.isActionOutside())
+//			Log.w("TouchType", "Outside");
+		GameManager gm = GameManager.getInstance();
 		if(pSceneTouchEvent.isActionDown())
 		{
 			// PowerBar Touched
 			if(tempX > 0 && tempX < 70 && tempY > Height - 256 && tempY < Height)
 			{
 				isPowerTouch = true;
-				startTouchX = tempX;
-				startTouchY = tempY;
+				startPower = gm.getPlayerPower(gm.getCurrentPlayer());
+				lastTouchX = tempX;
+				lastTouchY = tempY;
 			}
 			// AngleBar Touched
 			if(tempX > Width - 256 && tempX < Width && tempY > Height - 70 && tempY < Height)
 			{
 				isAngleTouch = true;
-				startTouchX = tempX;
-				startTouchY = tempY;
+				startAngle = gm.getPlayerAngle(gm.getCurrentPlayer());
+				lastTouchX = tempX;
+				lastTouchY = tempY;
 			}
+		}
+		if(pSceneTouchEvent.isActionMove())
+		{
+			if(isPowerTouch)
+			{
+				gm.changePlayerPower(gm.getCurrentPlayer(), (tempY - lastTouchY)/-20);
+				PowerBar[2].setY(16 + 208 * ((100 - gm.getPlayerPower(gm.getCurrentPlayer()))/100));
+			}
+			if(isAngleTouch)
+			{
+				gm.changePlayerAngle(gm.getCurrentPlayer(), (tempX - lastTouchX)/20);
+				AngleBar[2].setY(16 + 208 * ((180 - gm.getPlayerAngle(gm.getCurrentPlayer()))/180));			
+				}
 		}
 		if(pSceneTouchEvent.isActionUp())
 		{
 			if(isPowerTouch)
 			{
 				isPowerTouch = false;
-				Log.w("PowerTouch", "X:" + (startTouchX - tempX) + " Y:" + (startTouchY - tempY) );
+				gm.changePlayerPower(gm.getCurrentPlayer(), (tempY - lastTouchY)/-20);
+				PowerBar[2].setY(16 + 208 * ((100 - gm.getPlayerPower(gm.getCurrentPlayer()))/100));
+				Log.w("PowerTouch", "X:" + (tempX - lastTouchX) + " Y:" + (tempY - lastTouchY) );
+				
 			}
 			if(isAngleTouch)
 			{
 				isAngleTouch = false;
-				Log.w("AngleTouch", "X:" + (startTouchX - tempX) + " Y:" + (startTouchY - tempY) );
+				gm.changePlayerAngle(gm.getCurrentPlayer(), (tempX - lastTouchX)/20);
+				AngleBar[2].setY(16 + 208 * ((180 - gm.getPlayerAngle(gm.getCurrentPlayer()))/180));
+				Log.w("AngleTouch", "X:" + (tempX - lastTouchX) + " Y:" + (tempY - lastTouchY) );
 			}
 		}
 			
