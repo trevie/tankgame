@@ -108,16 +108,21 @@ public class GameManager {
 			return -1;		
 	}
 	
-	public void changePlayerAngle(int player, float angle)
+	public boolean changePlayerAngle(int player, float angle)
 	{
 		if(player > 0 && player <= maxPlayers)
 		{
+			float originalPower = this.playerAngle[player -1];
 			this.playerAngle[player - 1] = this.playerAngle[player - 1] + angle;
 			if(this.playerAngle[player - 1] < 0)
 				this.playerAngle[player - 1] = 0;
 			else if(this.playerAngle[player - 1] > 180)
 				this.playerAngle[player - 1] = 180;
+			// This checks to see if there was a transition from left facing to right or vice versa.
+			if((originalPower <= 90) ^ (this.playerAngle[player - 1]  <= 90))
+				return true;
 		}
+		return false;
 	}
 
 	public float getPlayerPower(int player)

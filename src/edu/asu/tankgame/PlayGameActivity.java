@@ -78,6 +78,9 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		
 		EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new FixedResolutionPolicy(Width, Height), mCamera);		
 		engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);
+
+		engineOptions.getAudioOptions().setNeedsMusic(true);
+		
 		isAngleTouch = false;
 		isPowerTouch = false;
 		return engineOptions;
@@ -87,6 +90,8 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 	public void onCreateResources( OnCreateResourcesCallback pOnCreateResourcesCallback)
 	{
 		ResourceManager.getInstance().loadGameTextures(mEngine, this);
+		ResourceManager.getInstance().loadSounds(mEngine, this);
+		
 		GameManager.getInstance().generateLevel(Height, Width);
 		// Notify call back that we've finished.	
 		pOnCreateResourcesCallback.onCreateResourcesFinished();
@@ -253,6 +258,7 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 
 
 		// Notify the callback that we've finished creating the scene
+		ResourceManager.getInstance().mMusic.play();
 		mScene.setOnSceneTouchListener(this);
 		pOnCreateSceneCallback.onCreateSceneFinished(mScene);
 	}
@@ -325,12 +331,14 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 	{
 		super.onResumeGame();
 		this.enableAccelerationSensor(this);
+		ResourceManager.getInstance().mMusic.play();
 	}
 	
 	@Override
 	public void onPauseGame()
 	{
 		super.onPauseGame();
+		ResourceManager.getInstance().mMusic.pause();
 		this.disableAccelerationSensor();
 	}
 
