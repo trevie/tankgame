@@ -1,84 +1,96 @@
 package edu.asu.tankgame;
 
-//import android.app.Activity;
-import java.util.List;
+//port android.app.Activity;
+import java.util.ArrayList;
+//import java.util.List;
 import java.util.Random;
 
-import android.app.ListActivity;
+//import android.app.Activity;
+import android.app.Activity;
+//import android.app.ListActivity;
 //import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
+//import android.webkit.WebChromeClient.CustomViewCallback;
+//import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
-public class HighScoresActivity extends ListActivity {
+public class HighScoresActivity extends Activity { // ListActivity {
 
 	private CommentsDataSource datasource;
 	
+	private ListView lv;
+	private HighScoreAdapter adapter;
+	//private ArrayList<Comment> fetch = new ArrayList<Comment>();
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_high_scores);
 		
-		//setContentView(R.layout.activity_high_scores);
 		// Show the Up button in the action bar.
-		//getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setDisplayHomeAsUpEnabled(true); // *** testing
 		
 		//Intent intent = getIntent();
 		//String message = intent.getStringExtra(MainMenuActivity.EXTRA_MESSAGE);	// get message by "key" name
 		
-		setContentView(R.layout.activity_high_scores);
+		//setContentView(R.layout.activity_high_scores);
 		
 		datasource = new CommentsDataSource(this);
 		datasource.open();
 		
-		List<Comment> values = datasource.getAllComments();
+		ArrayList<Comment> values = datasource.getAllComments();
+		
+		lv = (ListView) findViewById(R.id.listHighScores);
+		//adapter = new HighScoreAdapter(HighScoresActivity.this, R.id.listView1, fetch);
+		//adapter = new HighScoreAdapter(HighScoresActivity.this, values);
+		
+		// public HighScoreAdapter (Activity a, int textViewResourceId, ArrayList<Comment> data)
+		adapter = new HighScoreAdapter(HighScoresActivity.this, R.id.listHighScores, values);
 		
 		// Use the SimpleCursorAdapter to show the elements in a ListView
-		ArrayAdapter<Comment> adapter = new ArrayAdapter<Comment>(this, android.R.layout.simple_list_item_1, values); // android.R.layout.simple_list_item_1 is a common default
-		setListAdapter(adapter);
+		//ArrayAdapter<Comment> adapter = new ArrayAdapter<Comment>(this, android.R.layout.simple_list_item_1, values); // android.R.layout.simple_list_item_1 is a common default
+		//ArrayAdapter<Comment> adapter = new ArrayAdapter<Comment>(this, android.R.layout.two_line_list_item, android.R.id.text1, values); // android.R.layout.simple_list_item_1 is a common default
+		
+		//((ListView)findViewById(R.id.listHighScores)).setAdapter(adapter);
+		lv.setAdapter(adapter);
+		//setListAdapter(adapter);
 		
 	}
 	
 	// Called via onClick attribute for the buttons in activity_high_scores.xml
 	public void onClick(View view)
 	{
-		@SuppressWarnings("unchecked")
-		ArrayAdapter<Comment> adapter = (ArrayAdapter<Comment>) getListAdapter();
+		//@SuppressWarnings("unchecked")
+		//ArrayAdapter<Comment> adapter = (ArrayAdapter<Comment>) getListAdapter();
+		//HighScoreAdapter adapter = (HighScoreAdapter) getListAdapter();
+		HighScoreAdapter adapter = (HighScoreAdapter) lv.getAdapter();
+		
 		Comment comment = null;
-		/*
-		switch (view.getId())
-		{
-			case R.id.add:
-				String[] comments = new String[] { "Cool", "Very nice", "Hate it" };
-				int nextInt = new Random().nextInt(3);
-				// save the new comment to the database
-				comment = datasource.createComment(comments[nextInt]);
-				adapter.add(comment);
-				break;
-			case R.id.delete:
-				if (getListAdapter().getCount() > 0)
-				{
-					comment = (Comment) getListAdapter().getItem(0);
-					datasource.deleteComment(comment);
-					adapter.remove(comment);
-				}
-				break;
-		}
-		*/
+		
 		// ADD button
 		if (view.getId() == R.id.add) {
 			String[] comments = new String[] { "Drew", "Ben", "Michael" };
-			int nextInt = new Random().nextInt(3);
+			int randName = new Random().nextInt(3);
+			//int randScore = new Random().nextInt(55)*1000;
+			int randScore = (int)(Math.random() * 55) * 1000;
+			Log.w("onClick", "New randScore: " + Integer.toString(randScore));
 			// save the new comment to the database
-			comment = datasource.createComment(comments[nextInt]);
+			comment = datasource.createComment(comments[randName], randScore);
 			adapter.add(comment);
 		}
 		else if (view.getId() == R.id.delete) // DELETE button
 		{
-			if (getListAdapter().getCount() > 0)
+			//if (getListAdapter().getCount() > 0) // if extending ListActivity
+			if (lv.getAdapter().getCount() > 0)
 			{
-				comment = (Comment) getListAdapter().getItem(0);
+				//comment = (Comment) getListAdapter().getItem(0);
+				comment = (Comment) lv.getAdapter().getItem(0);
 				datasource.deleteComment(comment);
 				adapter.remove(comment);
 			}
