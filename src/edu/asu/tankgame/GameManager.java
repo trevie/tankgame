@@ -85,6 +85,12 @@ public class GameManager {
 		else
 			return 0;
 	}
+
+	public int getPlayerHealth( )
+	{
+		return this.playerHealth[currentPlayer];
+	}
+
 	
 	public int getPlayerPosition(int player)
 	{
@@ -94,11 +100,23 @@ public class GameManager {
 			return 0;
 	}
 	
+	public int getPlayerPosition( )
+	{
+		return this.playerPosition[currentPlayer];
+	}
+
+	
 	public void damagePlayer(int player, int damage)
 	{
 		if(player > 0 && player <= maxPlayers)
 			playerHealth[player - 1] = playerHealth[player - 1] - damage;
 	}
+	
+	public void damagePlayer(int damage)
+	{
+		playerHealth[currentPlayer] = playerHealth[currentPlayer] - damage;
+	}
+
 	
 	public float getPlayerAngle(int player)
 	{
@@ -107,6 +125,12 @@ public class GameManager {
 		else
 			return -1;		
 	}
+	
+	public float getPlayerAngle( )
+	{
+		return this.playerAngle[currentPlayer];
+	}
+
 	
 	public boolean changePlayerAngle(int player, float angle)
 	{
@@ -125,12 +149,32 @@ public class GameManager {
 		return false;
 	}
 
+	public boolean changePlayerAngle(float angle)
+	{
+		float originalPower = this.playerAngle[currentPlayer];
+		this.playerAngle[currentPlayer] = this.playerAngle[currentPlayer] + angle;
+		if(this.playerAngle[currentPlayer] < 0)
+			this.playerAngle[currentPlayer] = 0;
+		else if(this.playerAngle[currentPlayer] > 180)
+			this.playerAngle[currentPlayer] = 180;
+		// This checks to see if there was a transition from left facing to right or vice versa.
+		if((originalPower <= 90) ^ (this.playerAngle[currentPlayer]  <= 90))
+			return true;
+		else
+			return false;
+	}
+
+	
 	public float getPlayerPower(int player)
 	{
 		if(player > 0 && player <= maxPlayers)
 			return this.playerPower[player - 1];
 		else
 			return -1;		
+	}
+	public float getPlayerPower( )
+	{
+		return this.playerPower[currentPlayer];
 	}
 	
 	public void changePlayerPower(int player, float power)
@@ -144,6 +188,16 @@ public class GameManager {
 				this.playerPower[player - 1] = 100;
 		}
 	}
+	
+	public void changePlayerPower(float power)
+	{
+			this.playerPower[currentPlayer] = this.playerPower[currentPlayer] + power;
+			if(this.playerPower[currentPlayer] < 0)
+				this.playerPower[currentPlayer] = 0;
+			else if(this.playerPower[currentPlayer] > 100)
+				this.playerPower[currentPlayer] = 100;
+	}
+
 
 	public void togglePlayer()
 	{

@@ -52,11 +52,16 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 	
 	public Sprite [] PowerBar;
 	public Sprite [] AngleBar;
+	public Sprite fireButton;
 	
 	public boolean isPowerTouch;
 	public boolean isAngleTouch;
+	public boolean isFireTouch;
 	public float lastTouchX;
 	public float lastTouchY;
+	
+	public Sprite shellSprite;
+	public Body shellBody;
 	
 	
 	@Override
@@ -83,6 +88,7 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		
 		isAngleTouch = false;
 		isPowerTouch = false;
+		isFireTouch = false;
 		return engineOptions;
 	}
 	
@@ -106,7 +112,7 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		mScene.setBackground(background);
 		mScene.setBackgroundEnabled(true);
 		// parameters are StepsPerSecond, Gravity, AllowSleep, VelocityIterations, PositionIterations)
-		mPhysicsWorld = new FixedStepPhysicsWorld(30, new Vector2(0.0f, SensorManager.GRAVITY_EARTH), false, 1, 1);
+		mPhysicsWorld = new FixedStepPhysicsWorld(30, new Vector2(0.0f, SensorManager.GRAVITY_EARTH), false, 3, 8);
 		mScene.registerUpdateHandler(mPhysicsWorld); 
 		//SensorManager.GRAVITY_EARTH
 		//parameters are Density, Elasticity, Friction
@@ -162,7 +168,7 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 					mLevelBody[i][j] = null;
 				}
 			}
-
+/*
 		for(int i = 1; i < mLevelSprites.length - 1; i++)
 			for(int j = 1; j < mLevelSprites[i].length - 1; j++)
 			{
@@ -194,8 +200,7 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 					}	
 				}
 			}
-		
-			GameManager.getInstance();
+*/		
 			for(int i = 0; i < GameManager.maxPlayers; i++)
 			{
 				int pp = GameManager.getInstance().getPlayerPosition(i+1);
@@ -256,7 +261,10 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		AngleBar[1].attachChild(AngleBar[2]);
 		mScene.attachChild(AngleBar[0]);
 
-
+		fireButton = new Sprite((Width/2) - 64,Height - 128, ResourceManager.getInstance().mFireTextureRegion, mEngine.getVertexBufferObjectManager());
+		fireButton.setColor(1,1,1,0.5f);
+		mScene.attachChild(fireButton);
+		
 		// Notify the callback that we've finished creating the scene
 		ResourceManager.getInstance().mMusic.play();
 		mScene.setOnSceneTouchListener(this);
@@ -347,8 +355,7 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 	{
 		float tempX = pSceneTouchEvent.getX();
 		float tempY = pSceneTouchEvent.getY();
-		float startPower;
-		float startAngle;
+		boolean flipped;
 //		Log.w("Touch", "X:" + tempX + " Y:" + tempY );
 //		if(pSceneTouchEvent.isActionDown())
 //			Log.w("TouchType", "Down");
@@ -367,7 +374,6 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 			if(tempX > 0 && tempX < 70 && tempY > Height - 256 && tempY < Height)
 			{
 				isPowerTouch = true;
-				startPower = gm.getPlayerPower(gm.getCurrentPlayer());
 				lastTouchX = tempX;
 				lastTouchY = tempY;
 			}
@@ -375,12 +381,17 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 			if(tempX > Width - 256 && tempX < Width && tempY > Height - 70 && tempY < Height)
 			{
 				isAngleTouch = true;
-				startAngle = gm.getPlayerAngle(gm.getCurrentPlayer());
 				lastTouchX = tempX;
 				lastTouchY = tempY;
 			}
+			fireButton = new Sprite((Width/2) - 64,Height - 128, ResourceManager.getInstance().mFireTextureRegion, mEngine.getVertexBufferObjectManager());
+
+			if(tempX > ((Width/2) - 64) && tempX < ((Width/2) + 64)&& tempY > Height - 128 && tempY < Height)
+			{
+				isFireTouch = true;
+			}
 		}
-		if(pSceneTouchEvent.isActionMove())
+		if(pSceneTouchEvent.isActionMove() || pSceneTouchEvent.isActionUp())
 		{
 			if(isPowerTouch)
 			{
@@ -389,30 +400,70 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 			}
 			if(isAngleTouch)
 			{
-				gm.changePlayerAngle(gm.getCurrentPlayer(), (tempX - lastTouchX)/20);
-				AngleBar[2].setY(16 + 208 * ((180 - gm.getPlayerAngle(gm.getCurrentPlayer()))/180));			
-				}
-		}
-		if(pSceneTouchEvent.isActionUp())
-		{
-			if(isPowerTouch)
-			{
-				isPowerTouch = false;
-				gm.changePlayerPower(gm.getCurrentPlayer(), (tempY - lastTouchY)/-20);
-				PowerBar[2].setY(16 + 208 * ((100 - gm.getPlayerPower(gm.getCurrentPlayer()))/100));
-				Log.w("PowerTouch", "X:" + (tempX - lastTouchX) + " Y:" + (tempY - lastTouchY) );
-				
-			}
-			if(isAngleTouch)
-			{
-				isAngleTouch = false;
 				gm.changePlayerAngle(gm.getCurrentPlayer(), (tempX - lastTouchX)/20);
 				AngleBar[2].setY(16 + 208 * ((180 - gm.getPlayerAngle(gm.getCurrentPlayer()))/180));
-				Log.w("AngleTouch", "X:" + (tempX - lastTouchX) + " Y:" + (tempY - lastTouchY) );
+				if(gm.getPlayerAngle(gm.getCurrentPlayer()) <= 90)
+				{
+					Sprite tT = mPlayerSprites[1][(gm.getCurrentPlayer()-1)];
+					Sprite tB = mPlayerSprites[2][(gm.getCurrentPlayer()-1)];
+					tB.setX(20);
+					tB.setRotationCenter(4,4);
+					tB.setRotation(-gm.getPlayerAngle(gm.getCurrentPlayer()));
+					tB.setFlippedHorizontal(false);
+					tT.setFlippedHorizontal(false);
+				}
+				else
+				{
+					Sprite tT = mPlayerSprites[1][(gm.getCurrentPlayer()-1)];
+					Sprite tB = mPlayerSprites[2][(gm.getCurrentPlayer()-1)];
+					tB.setX(0);
+					tB.setRotationCenter(20,4);
+					tB.setRotation(180- gm.getPlayerAngle(gm.getCurrentPlayer()));
+					tB.setFlippedHorizontal(true);
+					tT.setFlippedHorizontal(true);
+				}
+			}
+			if(pSceneTouchEvent.isActionUp())
+			{
+				isPowerTouch = false;
+				isAngleTouch = false;
+				if(isFireTouch)
+				{
+					isFireTouch = false;
+					fireBullet();
+				}
 			}
 		}
+	
 			
 		return false;
 	}
 	
+	public void fireBullet()
+	{
+		final FixtureDef TILE_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.50f, 0.0f, 1.0f);		
+		
+		// Sin(angle) * power = Y
+		// Cos(angle) * power = X
+		float firedAngle = GameManager.getInstance().getPlayerAngle();
+		float firedForce = GameManager.getInstance().getPlayerPower();
+		float scalarX;
+		float scalarY;
+		
+		scalarX = (float) Math.cos(firedAngle);
+		scalarY = (float) Math.sin(firedAngle);
+		
+		float positionX = mPlayerSprites[0][GameManager.getInstance().getCurrentPlayer() - 1].getX() + 23;
+		float positionY = mPlayerSprites[0][GameManager.getInstance().getCurrentPlayer() - 1].getY() + 14;
+		
+		shellSprite = new Sprite( positionX + scalarX * 41, positionY - scalarY * 41, ResourceManager.getInstance().mShellTextureRegion, mEngine.getVertexBufferObjectManager());
+		shellSprite.setRotationCenter(9,4);
+		shellSprite.setRotation(firedAngle);
+		mScene.attachChild(shellSprite);
+		shellBody = PhysicsFactory.createBoxBody(this.mPhysicsWorld, shellSprite, BodyType.DynamicBody, TILE_FIXTURE_DEF);
+		mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(shellSprite, shellBody, true, true));
+		shellBody.applyLinearImpulse(scalarX * firedForce,scalarY * firedForce, shellBody.getWorldCenter().x, shellBody.getWorldCenter().y);
+
+		GameManager.getInstance().togglePlayer();
+	}
 }

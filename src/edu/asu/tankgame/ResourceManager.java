@@ -37,7 +37,8 @@ public class ResourceManager {
 	public ITextureRegion mBarLensTextureRegion;
 	public ITextureRegion mBarLineTextureRegion;
 	public ITextureRegion mHaloTextureRegion;
-	
+	public ITextureRegion mFireTextureRegion;
+	public ITextureRegion mShellTextureRegion;
 	public BitmapTextureAtlas mBitmapTextureAtlas;
 	
 	public Music mMusic;
@@ -72,10 +73,14 @@ public class ResourceManager {
 		mTankTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "tank.png");
 		mBarrelTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "gun.png");
 		mHaloTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "halo.png");
+		mShellTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "shell.png");
 		
 		mBarBGTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "PowerBarBG.png");
 		mBarLensTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "PowerBarLens.png");
 		mBarLineTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "PowerBarLine.png");
+		
+		// Place holder stolen from Dungeon Defenders
+		mFireTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "firebutton.png");
 		
 		
 		try {
