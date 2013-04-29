@@ -1,13 +1,14 @@
 package edu.asu.tankgame;
 
 import java.util.ArrayList;
-import java.util.List;
+//import java.util.List;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import edu.asu.tankgame.Comment;
 
@@ -16,8 +17,7 @@ public class CommentsDataSource {
   // Database fields
   private SQLiteDatabase database;
   private MySQLiteHelper dbHelper;
-  private String[] allColumns = { MySQLiteHelper.COLUMN_ID,
-      MySQLiteHelper.COLUMN_COMMENT };
+  private String[] allColumns = { MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_COMMENT, MySQLiteHelper.COLUMN_SCORE }; //
 
   public CommentsDataSource(Context context) {
     dbHelper = new MySQLiteHelper(context);
@@ -31,13 +31,16 @@ public class CommentsDataSource {
     dbHelper.close();
   }
 
-  public Comment createComment(String comment) {
+  public Comment createComment(String comment, int score) { // , int score
     ContentValues values = new ContentValues();
     values.put(MySQLiteHelper.COLUMN_COMMENT, comment);
+    values.put(MySQLiteHelper.COLUMN_SCORE, score);
+    Log.w("createComment","About to add ("+comment+","+score+")");
     long insertId = database.insert(MySQLiteHelper.TABLE_COMMENTS, null, values);
     Cursor cursor = database.query(MySQLiteHelper.TABLE_COMMENTS, allColumns, MySQLiteHelper.COLUMN_ID + " = " + insertId, null, null, null, null);
     cursor.moveToFirst();
     Comment newComment = cursorToComment(cursor);
+    Log.w("createComment", "Cursor now at (" + newComment.getComment() + ", " + newComment.getScore() + ")");
     cursor.close();
     return newComment;
   }
@@ -49,11 +52,12 @@ public class CommentsDataSource {
         + " = " + id, null);
   }
 
-  public List<Comment> getAllComments() {
-    List<Comment> comments = new ArrayList<Comment>();
+  //public List<Comment> getAllComments() {
+  public ArrayList<Comment> getAllComments() {
+    //List<Comment> comments = new ArrayList<Comment>();
+	ArrayList<Comment> comments = new ArrayList<Comment>();
 
-    Cursor cursor = database.query(MySQLiteHelper.TABLE_COMMENTS,
-        allColumns, null, null, null, null, null);
+    Cursor cursor = database.query(MySQLiteHelper.TABLE_COMMENTS, allColumns, null, null, null, null, null);
 
     cursor.moveToFirst();
     while (!cursor.isAfterLast()) {
@@ -70,6 +74,7 @@ public class CommentsDataSource {
     Comment comment = new Comment();
     comment.setId(cursor.getLong(0));
     comment.setComment(cursor.getString(1));
+    comment.setScore(cursor.getInt(2));
     return comment;
   }
 }

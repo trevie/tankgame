@@ -11,23 +11,27 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 /**
- * @author Michael
+ * @author Michael J. Astrauskas
  *
  */
 public class MySQLiteHelper extends SQLiteOpenHelper
 {
 
+	// These constants are used to refer to table and column names.
+	// This isn't required, but is an Android conventional.
 	public static final String TABLE_COMMENTS = "comments";
 	public static final String COLUMN_ID ="_id"; // you should ALWAYS use _id, by convention
 	public static final String COLUMN_COMMENT = "comment";
+	public static final String COLUMN_SCORE = "score";
 	
 	private static final String DATABASE_NAME = "comments.db";
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2; // version numbers are internal to the programs.  It's so you can update the Db if a newer version of the app has a never Db version.
 	
-	private static final String DATABASE_CREATE = "CREATE TABLE "
+	private static final String DATABASE_CREATE_comments = "CREATE TABLE "
 			+ TABLE_COMMENTS + "("
 			+ COLUMN_ID + " integer primary key autoincrement, "
-			+ COLUMN_COMMENT + " text not null);"; 
+			+ COLUMN_COMMENT + " text not null, "
+			+ COLUMN_SCORE + " integer);";
 	
 	public MySQLiteHelper(Context context)
 	{
@@ -54,7 +58,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper
 	 * @param errorHandler
 	 */
 	public MySQLiteHelper(Context context, String name, CursorFactory factory,
-			int version, DatabaseErrorHandler errorHandler) {
+			int version, DatabaseErrorHandler errorHandler)
+	{
 		super(context, name, factory, version, errorHandler);
 		// TODO Auto-generated constructor stub
 	}
@@ -63,10 +68,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper
 	 * @see android.database.sqlite.SQLiteOpenHelper#onCreate(android.database.sqlite.SQLiteDatabase)
 	 */
 	@Override
-	public void onCreate(SQLiteDatabase database) {
+	public void onCreate(SQLiteDatabase database)
+	{
 		// TODO Auto-generated method stub
 		
-		database.execSQL(DATABASE_CREATE);
+		database.execSQL(DATABASE_CREATE_comments);
 
 	}
 
@@ -78,8 +84,19 @@ public class MySQLiteHelper extends SQLiteOpenHelper
 		// TODO Auto-generated method stub
 
 		Log.w(MySQLiteHelper.class.getName(),"Upgrading Db from " + oldVersion + " to " + newVersion);
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_COMMENTS);
-		onCreate(db);
+		
+		//db.execSQL("DROP TABLE IF EXISTS " + TABLE_COMMENTS);
+		//onCreate(db);
+		switch (oldVersion)
+		{
+			case 1:
+				//db.execSQL("");
+				db.execSQL("DROP TABLE IF EXISTS " + TABLE_COMMENTS);
+				onCreate(db);
+				break; // Use fall-through if updating several versions
+			//case default:
+				
+		}
 	}
 
 }

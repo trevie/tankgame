@@ -427,11 +427,14 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 			{
 				isPowerTouch = false;
 				isAngleTouch = false;
+<<<<<<< HEAD
 				if(isFireTouch)
 				{
 					isFireTouch = false;
 					fireBullet();
 				}
+=======
+>>>>>>> 6633f05ce3d076bd4be5231b6cffa4f12e5fd47f
 			}
 		}
 	
