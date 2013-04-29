@@ -427,14 +427,11 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 			{
 				isPowerTouch = false;
 				isAngleTouch = false;
-<<<<<<< HEAD
 				if(isFireTouch)
 				{
 					isFireTouch = false;
 					fireBullet();
 				}
-=======
->>>>>>> 6633f05ce3d076bd4be5231b6cffa4f12e5fd47f
 			}
 		}
 	
@@ -460,8 +457,8 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		float positionY = mPlayerSprites[0][GameManager.getInstance().getCurrentPlayer() - 1].getY() + 14;
 		
 		shellSprite = new Sprite( positionX + scalarX * 41, positionY - scalarY * 41, ResourceManager.getInstance().mShellTextureRegion, mEngine.getVertexBufferObjectManager());
-		shellSprite.setRotationCenter(9,4);
-		shellSprite.setRotation(firedAngle);
+		shellSprite.setRotationCenter((float) (shellSprite.getWidth()/2.0f), (float)(shellSprite.getHeight()/2.0f));
+		shellSprite.setRotation(-firedAngle);
 		mScene.attachChild(shellSprite);
 		shellBody = PhysicsFactory.createBoxBody(this.mPhysicsWorld, shellSprite, BodyType.DynamicBody, TILE_FIXTURE_DEF);
 		mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(shellSprite, shellBody, true, true));
