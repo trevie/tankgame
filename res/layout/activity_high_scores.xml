@@ -6,29 +6,26 @@
     android:background="@color/mainMenuBGColour"
     tools:context=".HighScoresActivity" >
 
-    <TextView
-        android:id="@+id/textViewTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/lblTxtHighScores"
-        android:textAppearance="?android:attr/textAppearanceLargeInverse" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
         <Button
             android:id="@+id/add"
+            style="buttonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:background="@layout/light_button"
             android:onClick="onClick"
-            android:text="Add New"
-            />
+            android:text="Add New" />
 
         <Button
             android:id="@+id/delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:background="@layout/light_button"
             android:onClick="onClick"
             android:text="Delete First" />
 

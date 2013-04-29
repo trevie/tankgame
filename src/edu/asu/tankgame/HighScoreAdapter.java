@@ -95,7 +95,7 @@ public class HighScoreAdapter extends ArrayAdapter<Comment>
 			holder.txtFirst.setText(comment.getComment());
 			//holder.txtFirst.setText("poop");
 			Object c = comment.getScore();
-			holder.txtSecond.setText(c.toString());
+			holder.txtSecond.setText(c.toString() + "pts");
 			//holder.txtSecond.setText(1000);
 		}
 		//HashMap map = list.get(position);

@@ -27,19 +27,23 @@
 
     <Button
         android:id="@+id/btnHighScores"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/btnConfig"
         android:layout_centerHorizontal="true"
+        android:background="@layout/light_button"
         android:onClick="showHighScores"
-        android:text="@string/btnTxtHighScores" />
+        android:text="@string/btnTxtHighScores"
+        android:layout_margin="3dp"
+        />
 
     <Button
         android:id="@+id/btnConfig"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
+        android:background="@layout/light_button"
         android:onClick="showWeaponSelect"
         android:text="@string/btnTxtConfigGame" />
 

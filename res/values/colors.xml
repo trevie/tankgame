@@ -3,5 +3,14 @@
     <color name="mainMenuBGColour">#000</color>
     <color name="btnBGColour">#888</color>
     <color name="white">#FFF</color>
+    <color name="lightButtonPressed1">#DDF</color>
+    <color name="lightButtonPressed2">#BBF</color>
+    <color name="lightButtonBorder">#888</color>
+    <color name="lightButtonFocused1">#FFD</color>
+    <color name="lightButtonFocused2">#FFB</color>
+    <color name="lightButton1">#BBB</color>
+    <color name="lightButton2">#DDD</color>
+    <color name="lightButtonFocusedBorder">#DD8</color>
+    <color name="lightButtonPressedBorder">#88F</color>
     
 </resources>

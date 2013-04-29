@@ -54,10 +54,10 @@ public class CommentsDataSource {
 
   //public List<Comment> getAllComments() {
   public ArrayList<Comment> getAllComments() {
-    //List<Comment> comments = new ArrayList<Comment>();
 	ArrayList<Comment> comments = new ArrayList<Comment>();
 
-    Cursor cursor = database.query(MySQLiteHelper.TABLE_COMMENTS, allColumns, null, null, null, null, null);
+    //Cursor cursor = database.query(MySQLiteHelper.TABLE_COMMENTS, allColumns, null, null, null, null, null);
+	Cursor cursor = database.query(MySQLiteHelper.TABLE_COMMENTS, allColumns, null, null, null, null, MySQLiteHelper.COLUMN_SCORE + " DESC");
 
     cursor.moveToFirst();
     while (!cursor.isAfterLast()) {
