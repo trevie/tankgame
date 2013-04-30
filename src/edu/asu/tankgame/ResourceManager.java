@@ -107,7 +107,7 @@ public class ResourceManager {
 			}
 			else if(choice < 9)
 			{
-				mMusic = MusicFactory.createMusicFromAsset(pEngine.getMusicManager(), pContext, "villan.mp3");
+				mMusic = MusicFactory.createMusicFromAsset(pEngine.getMusicManager(), pContext, "villain.mp3");
 			}
 			else
 			{
