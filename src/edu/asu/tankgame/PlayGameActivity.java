@@ -85,6 +85,7 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);
 
 		engineOptions.getAudioOptions().setNeedsMusic(true);
+		engineOptions.getAudioOptions().setNeedsSound(true); // *** Mike testing
 		
 		isAngleTouch = false;
 		isPowerTouch = false;
@@ -471,5 +472,7 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 
 		PowerBar[2].setY(16 + 208 * (100 - gm.getPlayerPower()/100));
 		AngleBar[2].setY(16 + 208 * (180 - gm.getPlayerAngle()/180));
+		
+		ResourceManager.getInstance().mSound.play(); // *** Mike testing
 	}
 }

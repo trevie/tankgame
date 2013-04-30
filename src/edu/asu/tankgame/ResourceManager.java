@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.andengine.audio.music.Music;
 import org.andengine.audio.music.MusicFactory;
+import org.andengine.audio.sound.Sound;
 import org.andengine.audio.sound.SoundFactory;
 import org.andengine.engine.Engine;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
@@ -42,6 +43,7 @@ public class ResourceManager {
 	public BitmapTextureAtlas mBitmapTextureAtlas;
 	
 	public Music mMusic;
+	public Sound mSound;	// *** Mike testing
 	
 	ResourceManager(){
 		// The constructor is of no use to us
@@ -96,7 +98,7 @@ public class ResourceManager {
 		SoundFactory.setAssetBasePath("sfx/");
 		MusicFactory.setAssetBasePath("sfx/");
 		try {
-			double choice = Math.random() * 10;
+			double choice = Math.random() * 13;
 			if(choice < 3)
 			{
 				mMusic = MusicFactory.createMusicFromAsset(pEngine.getMusicManager(), pContext, "insane.mp3");
@@ -107,14 +109,25 @@ public class ResourceManager {
 			}
 			else if(choice < 9)
 			{
-				mMusic = MusicFactory.createMusicFromAsset(pEngine.getMusicManager(), pContext, "villan.mp3");
+				mMusic = MusicFactory.createMusicFromAsset(pEngine.getMusicManager(), pContext, "villain.mp3");
 			}
-			else
+			else if (choice < 12)
 			{
 				mMusic = MusicFactory.createMusicFromAsset(pEngine.getMusicManager(), pContext, "fugue.mp3");
 			}
+			else
+			{
+				mMusic = MusicFactory.createMusicFromAsset(pEngine.getMusicManager(), pContext, "ra.mp3");
+			}
 			mMusic.setLooping(true);
 		} catch (IOException e)	{
+			Debug.e(e);
+		}
+		
+		// Loading sound effects. *** Mike testing
+		try {
+			this.mSound = SoundFactory.createSoundFromAsset(pEngine.getSoundManager(), pContext, "firing-boom-distant.mp3");
+		} catch (final IOException e) {
 			Debug.e(e);
 		}
 	}

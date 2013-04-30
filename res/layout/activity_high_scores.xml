@@ -18,7 +18,7 @@
             android:layout_marginLeft="3dp"
             android:background="@layout/light_button"
             android:onClick="onClick"
-            android:text="Add New" />
+            android:text="@string/btnAddNew" />
 
         <Button
             android:id="@+id/delete"
@@ -27,7 +27,7 @@
             android:layout_marginLeft="3dp"
             android:background="@layout/light_button"
             android:onClick="onClick"
-            android:text="Delete First" />
+            android:text="@string/btnDeleteFirst" />
 
     </LinearLayout>
 
