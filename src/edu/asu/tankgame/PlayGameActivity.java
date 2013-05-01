@@ -120,9 +120,9 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		final FixtureDef WALL_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.0f, 0.0f, 0.0f);
 		final FixtureDef TILE_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.75f, 0.0f, 1.0f);
 		final Rectangle ground = new Rectangle(0, Height, Width, 1f, this.getVertexBufferObjectManager());
-		final Rectangle roof = new Rectangle(0, 0, Width, 1f, this.getVertexBufferObjectManager());
-		final Rectangle left = new Rectangle(0, 0, 1f, Height, this.getVertexBufferObjectManager());
-		final Rectangle right = new Rectangle(Width, 0, 1f, Height, this.getVertexBufferObjectManager());
+		final Rectangle roof = new Rectangle(0, -Height, Width, 1f, this.getVertexBufferObjectManager());
+		final Rectangle left = new Rectangle(0, -Height, 1f, Height*2, this.getVertexBufferObjectManager());
+		final Rectangle right = new Rectangle(Width, -Height, 1f, Height*2, this.getVertexBufferObjectManager());
 		ground.setColor(0f,0f,0f);
 		roof.setColor(0f,0f,0f);
 		left.setColor(0f,0f,0f);
@@ -470,8 +470,8 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 
 		shellBody.applyForce(new Vector2(scalarX * firedForce,scalarY * firedForce), new Vector2(shellBody.getWorldCenter().x, shellBody.getWorldCenter().y));
 
-		PowerBar[2].setY(16 + 208 * (100 - gm.getPlayerPower()/100));
-		AngleBar[2].setY(16 + 208 * (180 - gm.getPlayerAngle()/180));
+		PowerBar[2].setY(16 + 208 * ((100 - gm.getPlayerPower())/100));
+		AngleBar[2].setY(16 + 208 * ((180 - gm.getPlayerAngle())/180));
 		
 		ResourceManager.getInstance().mSound.play(); // *** Mike testing
 	}
