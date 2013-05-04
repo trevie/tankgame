@@ -14,6 +14,8 @@ public class GameManager {
 	private String[] playerName;
 	private int[] playerScore;
 	private int currentPlayer;
+	
+	public boolean gameOver;
 
 	public static final int maxPlayers = 2;	
 	public static final float initialPlayerHealth = 100;
@@ -28,6 +30,7 @@ public class GameManager {
 		playerScore = new int[maxPlayers];
 		
 		currentPlayer = 0;
+		gameOver = false;
 		
 		for(int i = 0; i < maxPlayers; i++)
 		{
@@ -154,6 +157,10 @@ public class GameManager {
 			{
 				playerHealth[player - 1] = playerHealth[player - 1] - damage;
 				incrementPlayerScore(dealtBy, (int)damage*10);
+			}
+			if(playerHealth[player - 1] <= 0)
+			{
+				gameOver = true;
 			}
 		}
 	}
