@@ -369,6 +369,10 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 //		else if(pSceneTouchEvent.isActionOutside())
 //			Log.w("TouchType", "Outside");
 		GameManager gm = GameManager.getInstance();
+		
+		//////////////////////////////////////////////////////////////////////////////
+		// Detect WHAT the user is touching (Power Bar, Angle Bar, or Fire Button). //
+		//////////////////////////////////////////////////////////////////////////////
 		if(pSceneTouchEvent.isActionDown())
 		{
 			// PowerBar Touched
@@ -392,6 +396,10 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 				isFireTouch = true;
 			}
 		}
+		
+		////////////////////////////////////////////////
+		// If we're sliding our finger or we release. //
+		////////////////////////////////////////////////
 		if(pSceneTouchEvent.isActionMove() || pSceneTouchEvent.isActionUp())
 		{
 			if(isPowerTouch)
@@ -401,9 +409,9 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 			}
 			if(isAngleTouch)
 			{
-				gm.changePlayerAngle(gm.getCurrentPlayer(), (tempX - lastTouchX)/20);
+				gm.changePlayerAngle(gm.getCurrentPlayer(), (tempX - lastTouchX)/20);	
 				AngleBar[2].setY(16 + 208 * ((180 - gm.getPlayerAngle(gm.getCurrentPlayer()))/180));
-				if(gm.getPlayerAngle(gm.getCurrentPlayer()) <= 90)
+				if(gm.getPlayerAngle(gm.getCurrentPlayer()) <= 90) // If facing left...
 				{
 					Sprite tT = mPlayerSprites[1][(gm.getCurrentPlayer()-1)];
 					Sprite tB = mPlayerSprites[2][(gm.getCurrentPlayer()-1)];
@@ -413,7 +421,7 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 					tB.setFlippedHorizontal(false);
 					tT.setFlippedHorizontal(false);
 				}
-				else
+				else // If the tank is facing right....
 				{
 					Sprite tT = mPlayerSprites[1][(gm.getCurrentPlayer()-1)];
 					Sprite tB = mPlayerSprites[2][(gm.getCurrentPlayer()-1)];
@@ -453,6 +461,16 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		
 		scalarX = (float) Math.cos(firedAngle);
 		scalarY = (float) Math.sin(firedAngle);
+		// Quadrants where operations are positive
+		// 0-90:    All
+		// 90-180:  Sin
+		// 180-270: Tan
+		// 270-360: Cos
+		if (firedAngle > 90 && firedAngle < 180)
+		{
+			scalarX = -scalarX;
+			scalarY = -scalarY;
+		}
 		
 		float positionX = mPlayerSprites[0][gm.getCurrentPlayer() - 1].getX() + 23;
 		float positionY = mPlayerSprites[0][gm.getCurrentPlayer() - 1].getY() + 14;
@@ -460,7 +478,9 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		gm.togglePlayer();
 
 		
+		//shellSprite = new Sprite( positionX + scalarX * 41, positionY - scalarY * 41, ResourceManager.getInstance().mShellTextureRegion, mEngine.getVertexBufferObjectManager());
 		shellSprite = new Sprite( positionX + scalarX * 41, positionY - scalarY * 41, ResourceManager.getInstance().mShellTextureRegion, mEngine.getVertexBufferObjectManager());
+		Log.w("firebullet", "P" + GameManager.getInstance().getCurrentPlayer() + " center is at (" + positionX + "," + positionY + ").  Putting shell (angle "+firedAngle+") top-left at (" + shellSprite.getX() + "," + shellSprite.getY() + ")");
 		shellSprite.setRotationCenter((float) (shellSprite.getWidth()/2.0f), (float)(shellSprite.getHeight()/2.0f));
 		shellSprite.setRotation(-firedAngle);
 		mScene.attachChild(shellSprite);
@@ -468,11 +488,12 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(shellSprite, shellBody, true, true));
 //		shellBody.setWorldCenter(15,3);
 
-		shellBody.applyForce(new Vector2(scalarX * firedForce,scalarY * firedForce), new Vector2(shellBody.getWorldCenter().x, shellBody.getWorldCenter().y));
+		// Temp disable by Mike ***
+		shellBody.applyForce(new Vector2(scalarX * firedForce, scalarY * firedForce), new Vector2(shellBody.getWorldCenter().x, shellBody.getWorldCenter().y));
 
 		PowerBar[2].setY(16 + 208 * (100 - gm.getPlayerPower()/100));
 		AngleBar[2].setY(16 + 208 * (180 - gm.getPlayerAngle()/180));
 		
-		ResourceManager.getInstance().mSound.play(); // *** Mike testing
+		ResourceManager.getInstance().mFiringSound.play();		// "boom"
 	}
 }

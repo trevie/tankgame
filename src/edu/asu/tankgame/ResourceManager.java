@@ -43,7 +43,7 @@ public class ResourceManager {
 	public BitmapTextureAtlas mBitmapTextureAtlas;
 	
 	public Music mMusic;
-	public Sound mSound;	// *** Mike testing
+	public Sound mFiringSound;		// for when a tank fires
 	
 	ResourceManager(){
 		// The constructor is of no use to us
@@ -81,7 +81,6 @@ public class ResourceManager {
 		mBarLensTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "PowerBarLens.png");
 		mBarLineTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "PowerBarLine.png");
 		
-		// Place holder stolen from Dungeon Defenders
 		mFireTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "firebutton.png");
 		
 		
@@ -124,9 +123,9 @@ public class ResourceManager {
 			Debug.e(e);
 		}
 		
-		// Loading sound effects. *** Mike testing
+		// Loading sound effects.
 		try {
-			this.mSound = SoundFactory.createSoundFromAsset(pEngine.getSoundManager(), pContext, "firing-boom-distant.mp3");
+			this.mFiringSound = SoundFactory.createSoundFromAsset(pEngine.getSoundManager(), pContext, "firing-boom-distant.mp3");
 		} catch (final IOException e) {
 			Debug.e(e);
 		}
