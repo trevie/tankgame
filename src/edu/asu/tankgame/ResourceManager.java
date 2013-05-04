@@ -45,7 +45,7 @@ public class ResourceManager {
 	public BitmapTextureAtlas mBitmapTextureAtlas;
 	
 	public Music mMusic;
-	public Sound mFireSound;	// *** Mike testing
+	public Sound mFiringSound;		// for when a tank fires
 	public Sound mHitSound;
 	
 	ResourceManager(){
@@ -128,9 +128,9 @@ public class ResourceManager {
 			Debug.e(e);
 		}
 		
-		// Loading sound effects. *** Mike testing
+		// Loading sound effects.
 		try {
-			this.mFireSound = SoundFactory.createSoundFromAsset(pEngine.getSoundManager(), pContext, "firing-boom-distant.mp3");
+			this.mFiringSound = SoundFactory.createSoundFromAsset(pEngine.getSoundManager(), pContext, "firing-boom-distant.mp3");
 			this.mHitSound = SoundFactory.createSoundFromAsset(pEngine.getSoundManager(), pContext, "boom, simple.mp3");
 		} catch (final IOException e) {
 			Debug.e(e);
