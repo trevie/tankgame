@@ -1,25 +1,32 @@
 package edu.asu.tankgame;
 
+import android.util.Log;
+
 public class GameManager {
 
 	private static GameManager INSTANCE;
 	
 	private boolean [][] level;
-	private int[] playerHealth;
+	private float[] playerHealth;
 	private int[] playerPosition;
 	private float[] playerAngle;		// 0 is left pointing level, 180 is right pointing level
 	private float[] playerPower;
+	private String[] playerName;
+	private int[] playerScore;
 	private int currentPlayer;
 
 	public static final int maxPlayers = 2;	
-	public static final int initialPlayerHealth = 100;
+	public static final float initialPlayerHealth = 100;
 	
 	GameManager()
 	{
-		playerHealth = new int[maxPlayers];
+		playerHealth = new float[maxPlayers];
 		playerPosition = new int[maxPlayers];
 		playerAngle = new float[maxPlayers];
 		playerPower = new float[maxPlayers];
+		playerName = new String[maxPlayers];
+		playerScore = new int[maxPlayers];
+		
 		currentPlayer = 0;
 		
 		for(int i = 0; i < maxPlayers; i++)
@@ -32,6 +39,35 @@ public class GameManager {
 				playerAngle[i] = 120;
 		}
 	}
+	
+	public void setPlayerName(int player, String name)
+	{
+		if(player > 0 && player <= maxPlayers)
+			playerName[player - 1] = name;	
+	}
+	
+	public String getPlayerName(int player)
+	{
+		if(player > 0 && player <= maxPlayers)
+			return this.playerName[player - 1];
+		else
+			return null;
+	}
+
+	public int getPlayerScore(int player)
+	{
+		if(player > 0 && player <= maxPlayers)
+			return playerScore[player - 1];	
+		else
+			return -1;
+	}
+	
+	private void incrementPlayerScore(int player, int score)
+	{
+		if(player > 0 && player <= maxPlayers)
+			playerScore[player -1] += score;
+	}
+
 	
 	public static GameManager getInstance(){
 		if(INSTANCE == null){
@@ -82,7 +118,7 @@ public class GameManager {
 		return level;
 	}
 	
-	public int getPlayerHealth(int player)
+	public float getPlayerHealth(int player)
 	{
 		if(player > 0 && player <= maxPlayers)
 			return this.playerHealth[player - 1];
@@ -90,7 +126,7 @@ public class GameManager {
 			return 0;
 	}
 
-	public int getPlayerHealth( )
+	public float getPlayerHealth( )
 	{
 		return this.playerHealth[currentPlayer];
 	}
@@ -110,17 +146,27 @@ public class GameManager {
 	}
 
 	
-	public void damagePlayer(int player, int damage)
+	public void damagePlayer(int player, float damage, int dealtBy)
 	{
 		if(player > 0 && player <= maxPlayers)
-			playerHealth[player - 1] = playerHealth[player - 1] - damage;
+		{
+			if(playerHealth[player - 1] > 0)
+			{
+				playerHealth[player - 1] = playerHealth[player - 1] - damage;
+				incrementPlayerScore(dealtBy, (int)damage*10);
+			}
+		}
 	}
 	
-	public void damagePlayer(int damage)
+	public void damageByImpact(int player, float x, float y)
 	{
-		playerHealth[currentPlayer] = playerHealth[currentPlayer] - damage;
+		double damage = Math.sqrt((x*x)+(y*y));
+		if(damage > 1)
+		{
+			Log.w("Damage player " + player , "impact x: " + x  + " impact y: " + y);
+			damagePlayer(player, (float) damage , (player%2)+1);
+		}
 	}
-
 	
 	public float getPlayerAngle(int player)
 	{
