@@ -1,8 +1,11 @@
 package edu.asu.tankgame;
 
+import java.util.ArrayList;
+
 import org.andengine.engine.Engine;
 import org.andengine.engine.FixedStepEngine;
 import org.andengine.engine.camera.Camera;
+import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.WakeLockOptions;
@@ -27,14 +30,18 @@ import org.andengine.ui.activity.BaseGameActivity;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
 
 import android.hardware.SensorManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
-public class PlayGameActivity extends BaseGameActivity implements IAccelerationListener, IOnSceneTouchListener{
+public class PlayGameActivity extends BaseGameActivity implements IAccelerationListener, IOnSceneTouchListener {
 	
 	private Camera mCamera;
 	private Scene mScene;
@@ -63,6 +70,8 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 	public Sprite shellSprite;
 	public Body shellBody;
 	
+	public ArrayList <Sprite> SpritesToDetach;
+	public ArrayList <Body> BodiesToDestroy;
 	
 	@Override
 	public Engine onCreateEngine(final EngineOptions pEngineOptions)
@@ -112,6 +121,9 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		Background background = new Background(0.45f,0.69f,0.85f,1f);
 		mScene.setBackground(background);
 		mScene.setBackgroundEnabled(true);
+		SpritesToDetach = new ArrayList <Sprite>();
+		BodiesToDestroy = new ArrayList <Body>();
+
 		// parameters are StepsPerSecond, Gravity, AllowSleep, VelocityIterations, PositionIterations)
 		mPhysicsWorld = new FixedStepPhysicsWorld(30, new Vector2(0.0f, SensorManager.GRAVITY_EARTH/2), false, 1, 1);
 		mScene.registerUpdateHandler(mPhysicsWorld); 
@@ -320,6 +332,70 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 	public void onPopulateScene(Scene pScene, OnPopulateSceneCallback pOnPopulateSceneCallback)
 	{
 		// Inform callback we've finished
+		ContactListener contactListener = new ContactListener()
+		{
+			@Override
+			public void beginContact(Contact contact)
+			{
+				if(isBodyContacted(shellBody, contact))
+				{
+					Log.w("Shell" , "impacted");
+					// explosion code
+					BodiesToDestroy.add(shellBody);
+					SpritesToDetach.add(shellSprite);
+					shellBody = null;
+					shellSprite = null;
+				}
+			}
+			
+			@Override
+			public void endContact(Contact contact)
+			{
+
+			}
+			
+			@Override
+			public void preSolve(Contact contact, Manifold oldManifold)
+			{
+				if(isBodyContacted(mPlayerBody[0], contact))
+				{
+					Vector2 impactForce = oldManifold.getLocalNormal();
+//					Log.w("Player 1" , "impact x: " + impactForce.x  + " impact y: " + impactForce.y);
+				}
+				else if(isBodyContacted(mPlayerBody[1], contact))
+				{
+					Vector2 impactForce = oldManifold.getLocalNormal();
+//					Log.w("Player 2" , "impact x: " + impactForce.x  + " impact y: " + impactForce.y);
+				}				
+			}
+			
+			@Override
+			public void postSolve(Contact contact, ContactImpulse impulse)
+			{
+
+			}
+		};
+		mPhysicsWorld.setContactListener(contactListener);
+		mScene.registerUpdateHandler(new IUpdateHandler() {
+			@Override
+			public void onUpdate(float pSecondsElapsed)
+			{
+				while(!SpritesToDetach.isEmpty())
+				{
+					Log.w("Update", "Delete Sprite " + SpritesToDetach.size());
+					mScene.detachChild(SpritesToDetach.remove(0));
+				}
+				while(!BodiesToDestroy.isEmpty())
+				{
+					Log.w("Update", "Destroy Body " + BodiesToDestroy.size());
+					mPhysicsWorld.destroyBody(BodiesToDestroy.remove(0));			
+				}
+			}
+			
+			@Override
+			public void reset() {};
+		});
+		
 		pOnPopulateSceneCallback.onPopulateSceneFinished();
 	}
 
@@ -356,7 +432,6 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 	{
 		float tempX = pSceneTouchEvent.getX();
 		float tempY = pSceneTouchEvent.getY();
-		boolean flipped;
 //		Log.w("Touch", "X:" + tempX + " Y:" + tempY );
 //		if(pSceneTouchEvent.isActionDown())
 //			Log.w("TouchType", "Down");
@@ -428,15 +503,14 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 			{
 				isPowerTouch = false;
 				isAngleTouch = false;
-				if(isFireTouch)
+				if(isFireTouch && shellSprite == null)
 				{
 					isFireTouch = false;
 					fireBullet();
 				}
 			}
 		}
-	
-			
+				
 		return false;
 	}
 	
@@ -475,4 +549,15 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		
 		ResourceManager.getInstance().mSound.play(); // *** Mike testing
 	}
+	
+	public boolean isBodyContacted(Body pBody, Contact pContact)
+	{
+		if(pContact.getFixtureA().getBody().equals(pBody))
+			return true;
+		else if(pContact.getFixtureB().getBody().equals(pBody))
+			return true;
+		return false;
+	}
 }
+
+
