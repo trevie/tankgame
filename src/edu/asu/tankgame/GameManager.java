@@ -184,6 +184,7 @@ public class GameManager {
 	
 	public boolean changePlayerAngle(int player, float angle)
 	{
+		angle = -angle; // Mike's tweak (1/2) to fix inverted angle bar
 		if(player > 0 && player <= maxPlayers)
 		{
 			float originalPower = this.playerAngle[player -1];
@@ -192,6 +193,8 @@ public class GameManager {
 				this.playerAngle[player - 1] = 0;
 			else if(this.playerAngle[player - 1] > 180)
 				this.playerAngle[player - 1] = 180;
+
+			//Log.w("changePlayerAngle","P" + player + " angle now " + this.playerAngle[player - 1] + ", delta " + angle);
 			// This checks to see if there was a transition from left facing to right or vice versa.
 			if((originalPower <= 90) ^ (this.playerAngle[player - 1]  <= 90))
 				return true;

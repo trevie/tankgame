@@ -493,15 +493,19 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 			}
 			if(isAngleTouch)
 			{
+				//Log.w("isAngleTouch", "P" + gm.getCurrentPlayer() + " angle is (" + tempX + " - " + lastTouchX + ") / 20 = " + ((tempX-lastTouchX)/20) + "r.");
 				gm.changePlayerAngle(gm.getCurrentPlayer(), (tempX - lastTouchX)/20);	
-				AngleBar[2].setY(16 + 208 * ((180 - gm.getPlayerAngle(gm.getCurrentPlayer()))/180));
+				//AngleBar[2].setY(16 + 208 * ((180 - gm.getPlayerAngle(gm.getCurrentPlayer()))/180));
+				AngleBar[2].setY(16 + 208 * (( gm.getPlayerAngle(gm.getCurrentPlayer()))/180)); // Mike's tweak (2/2) to fix inverted angle bar
 				if(gm.getPlayerAngle(gm.getCurrentPlayer()) <= 90) // If facing left...
 				{
-					Sprite tT = mPlayerSprites[1][(gm.getCurrentPlayer()-1)];
-					Sprite tB = mPlayerSprites[2][(gm.getCurrentPlayer()-1)];
+					Sprite tT = mPlayerSprites[1][(gm.getCurrentPlayer()-1)];	// T for Tank
+					Sprite tB = mPlayerSprites[2][(gm.getCurrentPlayer()-1)];	// B for Barrel
 					tB.setX(20);
 					tB.setRotationCenter(4,4);
 					tB.setRotation(-gm.getPlayerAngle(gm.getCurrentPlayer()));
+					//Log.w("isAngleTouch","P" + gm.getCurrentPlayer() + " angle is " + gm.getPlayerAngle(gm.getCurrentPlayer()) + ", barrel angle is " + tB.getRotation());
+					//tB.setRotation(180+gm.getPlayerAngle(gm.getCurrentPlayer()));
 					tB.setFlippedHorizontal(false);
 					tT.setFlippedHorizontal(false);
 				}
@@ -512,6 +516,8 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 					tB.setX(0);
 					tB.setRotationCenter(20,4);
 					tB.setRotation(180- gm.getPlayerAngle(gm.getCurrentPlayer()));
+					//Log.w("isAngleTouch","P" + gm.getCurrentPlayer() + " angle is " + gm.getPlayerAngle(gm.getCurrentPlayer()) + ", barrel angle is " + tB.getRotation());
+					//tB.setRotation(- gm.getPlayerAngle(gm.getCurrentPlayer()));
 					tB.setFlippedHorizontal(true);
 					tT.setFlippedHorizontal(true);
 				}
