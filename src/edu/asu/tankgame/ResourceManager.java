@@ -14,6 +14,7 @@ import org.andengine.opengl.texture.atlas.bitmap.source.IBitmapTextureAtlasSourc
 import org.andengine.opengl.texture.atlas.buildable.builder.BlackPawnTextureAtlasBuilder;
 import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder.TextureAtlasBuilderException;
 import org.andengine.opengl.texture.region.ITextureRegion;
+import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.util.debug.Debug;
 
 import android.content.Context;
@@ -40,10 +41,12 @@ public class ResourceManager {
 	public ITextureRegion mHaloTextureRegion;
 	public ITextureRegion mFireTextureRegion;
 	public ITextureRegion mShellTextureRegion;
+	public TiledTextureRegion mExplosionTextureRegion;
 	public BitmapTextureAtlas mBitmapTextureAtlas;
 	
 	public Music mMusic;
-	public Sound mSound;	// *** Mike testing
+	public Sound mFireSound;	// *** Mike testing
+	public Sound mHitSound;
 	
 	ResourceManager(){
 		// The constructor is of no use to us
@@ -82,6 +85,8 @@ public class ResourceManager {
 		mBarLineTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "PowerBarLine.png");
 		
 		mFireTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "firebutton.png");
+		
+		mExplosionTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mBitmapTextureAtlas, pContext, "explosion.jpg", 4, 3);
 		
 		
 		try {
@@ -125,7 +130,8 @@ public class ResourceManager {
 		
 		// Loading sound effects. *** Mike testing
 		try {
-			this.mSound = SoundFactory.createSoundFromAsset(pEngine.getSoundManager(), pContext, "firing-boom-distant.mp3");
+			this.mFireSound = SoundFactory.createSoundFromAsset(pEngine.getSoundManager(), pContext, "firing-boom-distant.mp3");
+			this.mHitSound = SoundFactory.createSoundFromAsset(pEngine.getSoundManager(), pContext, "boom, simple.mp3");
 		} catch (final IOException e) {
 			Debug.e(e);
 		}
@@ -157,6 +163,20 @@ public class ResourceManager {
 		mBitmapTextureAtlas = (BuildableBitmapTextureAtlas) mBarrelTextureRegion.getTexture();
 		mBitmapTextureAtlas.unload();
 		mBitmapTextureAtlas = (BuildableBitmapTextureAtlas) mCenterCornerTextureRegion.getTexture();
+		mBitmapTextureAtlas.unload();
+		mBitmapTextureAtlas = (BuildableBitmapTextureAtlas) mBarBGTextureRegion.getTexture();
+		mBitmapTextureAtlas.unload();
+		mBitmapTextureAtlas = (BuildableBitmapTextureAtlas) mBarLensTextureRegion.getTexture();
+		mBitmapTextureAtlas.unload();
+		mBitmapTextureAtlas = (BuildableBitmapTextureAtlas) mBarLineTextureRegion.getTexture();
+		mBitmapTextureAtlas.unload();
+		mBitmapTextureAtlas = (BuildableBitmapTextureAtlas) mFireTextureRegion.getTexture();
+		mBitmapTextureAtlas.unload();
+		mBitmapTextureAtlas = (BuildableBitmapTextureAtlas) mHaloTextureRegion.getTexture();
+		mBitmapTextureAtlas.unload();
+		mBitmapTextureAtlas = (BuildableBitmapTextureAtlas) mShellTextureRegion.getTexture();
+		mBitmapTextureAtlas.unload();
+		mBitmapTextureAtlas = (BuildableBitmapTextureAtlas) mExplosionTextureRegion.getTexture();
 		mBitmapTextureAtlas.unload();
 
 		System.gc();

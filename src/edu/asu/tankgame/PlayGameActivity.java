@@ -16,6 +16,7 @@ import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
+import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.extension.physics.box2d.FixedStepPhysicsWorld;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
@@ -56,6 +57,7 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 	public Body [][] mLevelBody;
 	public Sprite[][] mPlayerSprites;
 	public Body [] mPlayerBody;
+	public AnimatedSprite mExplosion;
 	
 	public Sprite [] PowerBar;
 	public Sprite [] AngleBar;
@@ -125,7 +127,7 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		BodiesToDestroy = new ArrayList <Body>();
 
 		// parameters are StepsPerSecond, Gravity, AllowSleep, VelocityIterations, PositionIterations)
-		mPhysicsWorld = new FixedStepPhysicsWorld(30, new Vector2(0.0f, SensorManager.GRAVITY_EARTH/2), false, 1, 1);
+		mPhysicsWorld = new FixedStepPhysicsWorld(30, new Vector2(0.0f, SensorManager.GRAVITY_EARTH/4), false, 3, 8);
 		mScene.registerUpdateHandler(mPhysicsWorld); 
 		//SensorManager.GRAVITY_EARTH
 		//parameters are Density, Elasticity, Friction
@@ -239,9 +241,9 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 							mPlayerSprites[2][i].setFlippedHorizontal(true);
 						}
 						if(i == 0)
-							mPlayerSprites[0][0].setColor(0.0f, 1.0f, 0.0f, 0.25f);
+							mPlayerSprites[0][0].setColor(0.0f, 1.0f, 0.0f, GameManager.getInstance().getPlayerHealth(i+1)/100f);
 						else if(i == 1)
-							mPlayerSprites[0][1].setColor(1.0f, 0.0f, 0.0f, 0.25f);
+							mPlayerSprites[0][1].setColor(1.0f, 0.0f, 0.0f, GameManager.getInstance().getPlayerHealth(i+1)/100f);
 					} 
 				if(mPlayerSprites[1][i] != null && mPlayerSprites[0][i] != null)
 				{
@@ -340,7 +342,11 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 				if(isBodyContacted(shellBody, contact))
 				{
 					Log.w("Shell" , "impacted");
+					ResourceManager.getInstance().mHitSound.play();
 					// explosion code
+					mExplosion = new AnimatedSprite(shellSprite.getX(), shellSprite.getY(), ResourceManager.getInstance().mExplosionTextureRegion, mEngine.getVertexBufferObjectManager());
+					mExplosion.animate(100, false);
+					mScene.attachChild(mExplosion);
 					BodiesToDestroy.add(shellBody);
 					SpritesToDetach.add(shellSprite);
 					shellBody = null;
@@ -357,15 +363,16 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 			@Override
 			public void preSolve(Contact contact, Manifold oldManifold)
 			{
+				Vector2 impactForce;
 				if(isBodyContacted(mPlayerBody[0], contact))
 				{
-					Vector2 impactForce = oldManifold.getLocalNormal();
-//					Log.w("Player 1" , "impact x: " + impactForce.x  + " impact y: " + impactForce.y);
+					impactForce = mPlayerBody[0].getLinearVelocity();
+					GameManager.getInstance().damageByImpact(1, impactForce.x, impactForce.y);
 				}
 				else if(isBodyContacted(mPlayerBody[1], contact))
 				{
-					Vector2 impactForce = oldManifold.getLocalNormal();
-//					Log.w("Player 2" , "impact x: " + impactForce.x  + " impact y: " + impactForce.y);
+					impactForce = mPlayerBody[1].getLinearVelocity();
+					GameManager.getInstance().damageByImpact(2, impactForce.x, impactForce.y);
 				}				
 			}
 			
@@ -380,6 +387,8 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 			@Override
 			public void onUpdate(float pSecondsElapsed)
 			{
+				mPlayerSprites[0][0].setColor(0.0f, 1.0f, 0.0f, GameManager.getInstance().getPlayerHealth(1)/100f);
+				mPlayerSprites[0][1].setColor(1.0f, 0.0f, 0.0f, GameManager.getInstance().getPlayerHealth(2)/100f);
 				while(!SpritesToDetach.isEmpty())
 				{
 					Log.w("Update", "Delete Sprite " + SpritesToDetach.size());
@@ -534,7 +543,7 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		gm.togglePlayer();
 
 		
-		shellSprite = new Sprite( positionX + scalarX * 41, positionY - scalarY * 41, ResourceManager.getInstance().mShellTextureRegion, mEngine.getVertexBufferObjectManager());
+		shellSprite = new Sprite( positionX + scalarX * 41, positionY + scalarY * 41, ResourceManager.getInstance().mShellTextureRegion, mEngine.getVertexBufferObjectManager());
 		shellSprite.setRotationCenter((float) (shellSprite.getWidth()/2.0f), (float)(shellSprite.getHeight()/2.0f));
 		shellSprite.setRotation(-firedAngle);
 		mScene.attachChild(shellSprite);
@@ -542,12 +551,13 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(shellSprite, shellBody, true, true));
 //		shellBody.setWorldCenter(15,3);
 
-		shellBody.applyForce(new Vector2(scalarX * firedForce,scalarY * firedForce), new Vector2(shellBody.getWorldCenter().x, shellBody.getWorldCenter().y));
+		shellBody.applyForce(new Vector2(scalarX * firedForce/2,scalarY * firedForce/2), new Vector2(shellBody.getWorldCenter().x, shellBody.getWorldCenter().y));
 
 		PowerBar[2].setY(16 + 208 * ((100 - gm.getPlayerPower())/100));
 		AngleBar[2].setY(16 + 208 * ((180 - gm.getPlayerAngle())/180));
-		
-		ResourceManager.getInstance().mSound.play(); // *** Mike testing
+		ResourceManager.getInstance().mFireSound.play(); // *** Mike testing
+		if(mExplosion != null)
+			SpritesToDetach.add(mExplosion);
 	}
 	
 	public boolean isBodyContacted(Body pBody, Contact pContact)
