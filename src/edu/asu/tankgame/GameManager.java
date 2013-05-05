@@ -14,7 +14,7 @@ public class GameManager {
 	private String[] playerName;
 	private int[] playerScore;
 	private int currentPlayer;
-	
+		
 	public boolean gameOver;
 
 	public static final int maxPlayers = 2;	
@@ -27,7 +27,10 @@ public class GameManager {
 		playerAngle = new float[maxPlayers];
 		playerPower = new float[maxPlayers];
 		playerName = new String[maxPlayers];
+		for(int i = 1; i <= maxPlayers; i++)
+			playerName[i-1] = "Player" + i;
 		playerScore = new int[maxPlayers];
+		
 		
 		currentPlayer = 0;
 		gameOver = false;

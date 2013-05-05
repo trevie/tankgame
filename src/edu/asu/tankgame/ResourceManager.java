@@ -96,7 +96,7 @@ public class ResourceManager {
 			Debug.e(e);
 		}
 	}
-	
+		
 	public synchronized void loadSounds(Engine pEngine, Context pContext)
 	{
 		SoundFactory.setAssetBasePath("sfx/");
