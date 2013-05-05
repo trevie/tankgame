@@ -43,6 +43,7 @@ public class CommentsDataSource {
     Log.w("createComment", "Cursor now at (" + newComment.getComment() + ", " + newComment.getScore() + ")");
     cursor.close();
     return newComment;
+    
   }
 
   public void deleteComment(Comment comment) {
@@ -68,6 +69,7 @@ public class CommentsDataSource {
     // Make sure to close the cursor
     cursor.close();
     return comments;
+    
   }
 
   private Comment cursorToComment(Cursor cursor) {
@@ -77,4 +79,6 @@ public class CommentsDataSource {
     comment.setScore(cursor.getInt(2));
     return comment;
   }
+  
+  
 }

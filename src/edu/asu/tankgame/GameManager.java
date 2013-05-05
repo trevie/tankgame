@@ -17,8 +17,7 @@ public class GameManager {
 	private int weaponForce;		
 	public boolean gameOver;
 
-
-	public static final int maxPlayers = 1;	
+	public static final int maxPlayers = 2;	
 	public static final float initialPlayerHealth = 100;
 	
 	GameManager()

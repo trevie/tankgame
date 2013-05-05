@@ -3,7 +3,7 @@ package edu.asu.tankgame;
 //port android.app.Activity;
 import java.util.ArrayList;
 //import java.util.List;
-import java.util.Random;
+//import java.util.Random;
 
 //import android.app.Activity;
 import android.app.Activity;
@@ -11,7 +11,7 @@ import android.app.Activity;
 //import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.util.Log;
+//import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 //import android.webkit.WebChromeClient.CustomViewCallback;
@@ -71,8 +71,19 @@ public class HighScoresActivity extends Activity { // ListActivity {
 		//HighScoreAdapter adapter = (HighScoreAdapter) getListAdapter();
 		HighScoreAdapter adapter = (HighScoreAdapter) lv.getAdapter();
 		
-		Comment comment = null;
-		
+		//Comment comment = null;
+		Comment comment;
+
+		if (view.getId() == R.id.btnClear)	
+		{
+			while (lv.getAdapter().getCount() > 0)
+			{
+				comment = (Comment) lv.getAdapter().getItem(0);
+				datasource.deleteComment(comment);
+				adapter.remove(comment);
+			}
+		}
+		/*
 		////////////////
 		// ADD button //
 		////////////////
@@ -100,6 +111,8 @@ public class HighScoresActivity extends Activity { // ListActivity {
 				adapter.remove(comment);
 			}
 		}
+		*/
+		
 		adapter.notifyDataSetChanged();
 	}
 	
