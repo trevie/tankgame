@@ -14,7 +14,8 @@
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/Instr"/>
+        android:text="@string/Instr"
+        android:textColor="@color/white" />
 
     <ListView
         android:id="@+id/listView1"
@@ -43,7 +44,37 @@
         android:text="Play"
         android:textColor="#ff00ff00"
         android:textColorHint="#ff00ff00" />
-    
-	
+
+    <EditText
+        android:id="@+id/ETPlayerName1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView1"
+        android:layout_below="@+id/textView1"
+        android:ems="10"
+        android:text="Player the First"
+        android:textColor="@color/white" >
+
+        <requestFocus />
+    </EditText>
+
+    <TextView
+        android:id="@+id/TVPlayerName2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/ETPlayerName1"
+        android:layout_below="@+id/ETPlayerName1"
+        android:text="@string/strPlayer2Name"
+        android:textColor="@color/white" />
+
+    <EditText
+        android:id="@+id/ETPlayerName2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/TVPlayerName2"
+        android:layout_below="@+id/TVPlayerName2"
+        android:ems="10"
+        android:text="Player the Second"
+        android:textColor="@color/white" />
 	
 </RelativeLayout>

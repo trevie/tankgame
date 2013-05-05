@@ -16,5 +16,6 @@
     <string name="btnAddNew">Add New</string>
     <string name="btnDeleteFirst">Delete First</string>
     <string name="btnClearHighScores">Clear High Scores</string>
+    <string name="strPlayer2Name">Player 2 Name:</string>
 
 </resources>
