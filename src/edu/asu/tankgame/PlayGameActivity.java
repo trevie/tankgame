@@ -44,6 +44,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.hardware.SensorManager;
+import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
@@ -149,6 +150,11 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 	@Override
 	public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback)
 	{
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+		    String value = extras.getString("WeaponForce");
+			GameManager.getInstance().setWeaponSize(value);
+		}
 		// Create the scene object and background roughly sky colored
 		gameOver = null;
 		mScene = new Scene();
@@ -317,6 +323,12 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		AngleBar[0].setRotation(90);
 		AngleBar[0].attachChild(AngleBar[1]);
 		AngleBar[1].attachChild(AngleBar[2]);
+		
+		// from mike's code
+		PowerBar[2].setY(16 + 208 * ((100 - GameManager.getInstance().getPlayerPower())/100));
+		//AngleBar[2].setY(16 + 208 * ((180 - gm.getPlayerAngle())/180));
+		AngleBar[2].setY(16 + 208 * (( GameManager.getInstance().getPlayerAngle())/180));
+
 		mScene.attachChild(AngleBar[0]);
 
 		fireButton = new Sprite((Width/2) - 64,Height - 128, ResourceManager.getInstance().mFireTextureRegion, mEngine.getVertexBufferObjectManager());
@@ -391,7 +403,7 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 				if(isBodyContacted(shellBody, contact))
 				{
 					int weaponForce = GameManager.getInstance().getWeaponForce();
-					Log.w("Shell" , "impacted");
+					Log.w("Shell" , "impacted with force" + weaponForce);
 					ResourceManager.getInstance().mHitSound.play();
 					mExplosion = new AnimatedSprite(shellSprite.getX()-(32*weaponForce), shellSprite.getY()-(32*weaponForce), ResourceManager.getInstance().mExplosionTextureRegion, mEngine.getVertexBufferObjectManager());
 					mExplosion.setScale((float) weaponForce);
@@ -415,10 +427,10 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 						GameManager.getInstance().damagePlayer(1, 10 * weaponForce, 2);
 						// Add push code here
 					}
-					if(mPlayerSprites[1][0].collidesWith(mExplosion))
+					if(mPlayerSprites[0][1].collidesWith(mExplosion))
 					{
 						GameManager.getInstance().damagePlayer(2, 10 * weaponForce, 1);
-						// Add psuh code here
+						// Add push code here
 					}
 					mScene.attachChild(mExplosion);
 					BodiesToDestroy.add(shellBody);

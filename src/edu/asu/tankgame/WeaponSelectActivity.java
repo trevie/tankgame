@@ -20,6 +20,8 @@ import android.widget.TextView;
 
 public class WeaponSelectActivity extends Activity {
 
+	public String selection;
+	
 	public final static String EXTRA_MESSAGE = "edu.asu.tankgame.message";	// a key for passing extras
 	ListView weaponsListView;
 	ArrayAdapter arrayAdapter;
@@ -74,10 +76,7 @@ public class WeaponSelectActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View view, int position,
 					long id) {
-				String type = (String) ((TextView)view).getText();
-				GameManager Size = new GameManager();
-				Size.setWeaponSize(type);
-				
+				selection = (String) ((TextView)view).getText();				
 			}
         });
 		
@@ -129,10 +128,12 @@ public class WeaponSelectActivity extends Activity {
 		// They're usually, but not always, used to start another activity.
 		
 		Intent intent = new Intent(this, PlayGameActivity.class);	// constructor takes Context then class to deliver intent to
+		intent.putExtra("WeaponForce" , selection);
 		String message = "Hi from weapon select menu";
+		if(GameManager.getInstance().gameOver)
+			GameManager.getInstance().reset();
 		intent.putExtra(EXTRA_MESSAGE, message);
-		startActivity(intent);
-		
+		startActivity(intent);		
 		
 	}
 }
