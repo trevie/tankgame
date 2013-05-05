@@ -13,11 +13,11 @@ public class GameManager {
 	private float[] playerPower;
 	private String[] playerName;
 	private int[] playerScore;
-	private int currentPlayer;
-	
-	private int weaponForce;
-		
+	private int currentPlayer;	
+	private int weaponForce;		
 	public boolean gameOver;
+	private int weaponSize;
+
 
 	public static final int maxPlayers = 2;	
 	public static final float initialPlayerHealth = 100;
@@ -53,6 +53,19 @@ public class GameManager {
 	{
 		if(player > 0 && player <= maxPlayers)
 			playerName[player - 1] = name;	
+	}
+	
+	public void setWeaponSize(String Mode)
+	{
+		if (Mode == "Baby Missile Mode"){
+			weaponSize=1;
+		}
+		if (Mode == "Missile Mode"){
+			weaponSize=2;
+		}
+		if (Mode == "Nuke Mode"){
+			weaponSize=4;
+		}
 	}
 	
 	public String getPlayerName(int player)
