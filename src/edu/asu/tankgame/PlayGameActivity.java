@@ -408,6 +408,15 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 					mExplosion = new AnimatedSprite(shellSprite.getX()-(32*weaponForce), shellSprite.getY()-(32*weaponForce), ResourceManager.getInstance().mExplosionTextureRegion, mEngine.getVertexBufferObjectManager());
 					mExplosion.setScale((float) weaponForce);
 					mExplosion.animate(100, false);
+					
+					float midX = shellSprite.getX() + shellSprite.getWidth() / 2;
+					float midY = shellSprite.getY() + shellSprite.getHeight() / 2;
+
+					midX-=mExplosion.getWidth()/2;
+					midY-=mExplosion.getHeight()/2;
+					
+					
+					mExplosion.setPosition(midX , midY);
 					// explosion code
 					// destroy tiles
 					for(int i = 0; i < mLevelSprites.length; i++)
@@ -419,6 +428,7 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 								SpritesToDetach.add(mLevelSprites[i][j]);
 								mLevelBody[i][j] = null;
 								mLevelSprites[i][j] = null;
+								GameManager.getInstance().toggleLevelBool(i,j);
 							}
 						}
 					// Damage and Push Players

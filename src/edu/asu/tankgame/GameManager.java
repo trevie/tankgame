@@ -16,6 +16,7 @@ public class GameManager {
 	private int currentPlayer;	
 	private int weaponForce;		
 	public boolean gameOver;
+	public boolean saveLevel;
 
 
 	public static final int maxPlayers = 2;	
@@ -34,6 +35,7 @@ public class GameManager {
 		
 		weaponForce = 1;
 		currentPlayer = 0;
+		saveLevel = true;
 		gameOver = false;
 		
 		for(int i = 0; i < maxPlayers; i++)
@@ -55,23 +57,19 @@ public class GameManager {
 	
 	public void setWeaponSize(String Mode)
 	{
-		Log.w("setWeapon", Mode);
-		if (Mode.equals("Baby Missile Mode")){
-			weaponForce=1;
-			Log.w("mode", "1");
-		}
-		else if (Mode.equals("Missile Mode")){
-			weaponForce=2;
-			Log.w("mode", "2");
-		}
-		else if (Mode.equals("Nuke Mode")){
-			weaponForce=4;
-			Log.w("mode", "4");
-		}
-		else {
-			weaponForce=1;
-			Log.w("mode", "default");
-		}
+		if(Mode != null)
+			if (Mode.equals("Baby Missile Mode")){
+				weaponForce=1;
+			}
+			else if (Mode.equals("Missile Mode")){
+				weaponForce=2;
+			}
+			else if (Mode.equals("Nuke Mode")){
+				weaponForce=4;
+			}
+			else {
+				weaponForce=1;
+			}
 	}
 	
 	public String getPlayerName(int player)
@@ -125,11 +123,11 @@ public class GameManager {
 		
 		for(int i = 0; i < level.length; i++)
 		{
-//			limit = (int) (Math.random() * (level[i].length - 2));
-			if(i != 2 && i != (level.length -3))
-				limit = 3;
-			else
-				limit = 7;
+			limit = (int) (Math.random() * (level[i].length - 2));
+//			if(i != 2 && i != (level.length -3))
+//				limit = 3;
+//			else
+//				limit = 7;
 			if(limit < 2)
 				limit = 2;
 			for(int j = 0;j <= limit; j++)
@@ -186,6 +184,7 @@ public class GameManager {
 			if(playerHealth[player - 1] <= 0)
 			{
 				gameOver = true;
+				saveLevel = false;
 			}
 		}
 	}
@@ -308,6 +307,14 @@ public class GameManager {
 	public void reset()
 	{
 		INSTANCE = new GameManager();
+	}
+	
+	public void toggleLevelBool(int x, int y)
+	{
+		if(level[x][y])
+			level[x][y] = false;
+		else
+			level[x][y] = true;	
 	}
 
 }
