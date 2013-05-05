@@ -30,9 +30,8 @@ public class GameManager {
 		for(int i = 1; i <= maxPlayers; i++)
 			playerName[i-1] = "Player" + i;
 		playerScore = new int[maxPlayers];
-		weaponForce = 2;
 		
-		
+		weaponForce = 1;
 		currentPlayer = 0;
 		gameOver = false;
 		
@@ -55,14 +54,22 @@ public class GameManager {
 	
 	public void setWeaponSize(String Mode)
 	{
-		if (Mode == "Baby Missile Mode"){
+		Log.w("setWeapon", Mode);
+		if (Mode.equals("Baby Missile Mode")){
 			weaponForce=1;
+			Log.w("mode", "1");
 		}
-		if (Mode == "Missile Mode"){
+		else if (Mode.equals("Missile Mode")){
 			weaponForce=2;
+			Log.w("mode", "2");
 		}
-		if (Mode == "Nuke Mode"){
+		else if (Mode.equals("Nuke Mode")){
 			weaponForce=4;
+			Log.w("mode", "4");
+		}
+		else {
+			weaponForce=1;
+			Log.w("mode", "default");
 		}
 	}
 	
@@ -296,4 +303,10 @@ public class GameManager {
 	{
 		return weaponForce;
 	} 
+	
+	public void reset()
+	{
+		INSTANCE = new GameManager();
+	}
+
 }
