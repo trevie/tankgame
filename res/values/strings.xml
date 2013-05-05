@@ -17,5 +17,9 @@
     <string name="btnDeleteFirst">Delete First</string>
     <string name="btnClearHighScores">Clear High Scores</string>
     <string name="strPlayer2Name">Player 2 Name:</string>
+    <string name="strPlayer1Name">Player 1 Name:</string>
+    <string name="strP1DefaultName">Player the First</string>
+    <string name="strP2DefaultName">Player the Second</string>
+    
 
 </resources>

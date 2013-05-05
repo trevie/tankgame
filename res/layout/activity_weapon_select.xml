@@ -14,7 +14,7 @@
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/Instr"
+        android:text="@string/strPlayer1Name"
         android:textColor="@color/white" />
 
     <ListView
@@ -52,7 +52,7 @@
         android:layout_alignLeft="@+id/textView1"
         android:layout_below="@+id/textView1"
         android:ems="10"
-        android:text="Player the First"
+        android:text="@string/strP1DefaultName"
         android:textColor="@color/white" >
 
         <requestFocus />
@@ -74,7 +74,7 @@
         android:layout_alignLeft="@+id/TVPlayerName2"
         android:layout_below="@+id/TVPlayerName2"
         android:ems="10"
-        android:text="Player the Second"
+        android:text="@string/strP2DefaultName"
         android:textColor="@color/white" />
 	
 </RelativeLayout>
