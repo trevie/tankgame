@@ -364,9 +364,26 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 				{
 					Log.w("Shell" , "impacted");
 					ResourceManager.getInstance().mHitSound.play();
-					// explosion code
 					mExplosion = new AnimatedSprite(shellSprite.getX(), shellSprite.getY(), ResourceManager.getInstance().mExplosionTextureRegion, mEngine.getVertexBufferObjectManager());
+					mExplosion.setScale((float) GameManager.getInstance().getWeaponForce());
 					mExplosion.animate(100, false);
+					// explosion code
+					// destroy tiles
+					for(int i = 0; i < mLevelSprites.length; i++)
+						for(int j = 0; j < mLevelSprites[i].length; j++)
+						{
+							if(mLevelSprites[i][j] != null && mLevelSprites[i][j].collidesWith(mExplosion))
+							{
+								BodiesToDestroy.add(mLevelBody[i][j]);
+								SpritesToDetach.add(mLevelSprites[i][j]);
+								mLevelBody[i][j] = null;
+								mLevelSprites[i][j] = null;
+							}
+						}
+					// push players
+					// ToDo
+					// damage players
+					// ToDo
 					mScene.attachChild(mExplosion);
 					BodiesToDestroy.add(shellBody);
 					SpritesToDetach.add(shellSprite);

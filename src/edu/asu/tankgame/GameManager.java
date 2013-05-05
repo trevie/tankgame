@@ -14,6 +14,8 @@ public class GameManager {
 	private String[] playerName;
 	private int[] playerScore;
 	private int currentPlayer;
+	
+	private int weaponForce;
 		
 	public boolean gameOver;
 
@@ -30,6 +32,7 @@ public class GameManager {
 		for(int i = 1; i <= maxPlayers; i++)
 			playerName[i-1] = "Player" + i;
 		playerScore = new int[maxPlayers];
+		weaponForce = 1;
 		
 		
 		currentPlayer = 0;
@@ -271,5 +274,15 @@ public class GameManager {
 	public int getCurrentPlayer()
 	{
 		return currentPlayer + 1;
+	}
+
+	public void setWeaponForce(int force)
+	{
+		weaponForce = force;
+	}
+	
+	public int getWeaponForce()
+	{
+		return weaponForce;
 	}
 }
