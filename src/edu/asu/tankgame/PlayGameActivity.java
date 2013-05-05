@@ -174,9 +174,9 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 				};
 		//TILE_FIXTURE_DEF.filter.
 		final Rectangle ground = new Rectangle(0, Height, Width, 1f, this.getVertexBufferObjectManager());
-		final Rectangle roof = new Rectangle(0, -Height, Width, 1f, this.getVertexBufferObjectManager());
-		final Rectangle left = new Rectangle(0, -Height, 1f, Height*2, this.getVertexBufferObjectManager());
-		final Rectangle right = new Rectangle(Width, -Height, 1f, Height*2, this.getVertexBufferObjectManager());
+		final Rectangle roof = new Rectangle(0, -3*Height, Width, 1f, this.getVertexBufferObjectManager());
+		final Rectangle left = new Rectangle(0, -3*Height, 1f, Height*4, this.getVertexBufferObjectManager());
+		final Rectangle right = new Rectangle(Width, -3*Height, 1f, Height*4, this.getVertexBufferObjectManager());
 		ground.setColor(0f,0f,0f);
 		roof.setColor(0f,0f,0f);
 		left.setColor(0f,0f,0f);
@@ -478,15 +478,32 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 				if(GameManager.getInstance().gameOver == true && gameOver == null)
 				{
 					String winner;
+					int winnerScore;
+					
 					if(GameManager.getInstance().getPlayerHealth(1) >= GameManager.getInstance().getPlayerHealth(2))
+					{
 						winner = GameManager.getInstance().getPlayerName(1);
+						winnerScore = GameManager.getInstance().getPlayerScore(1);
+					}
 					else
+					{
 						winner = GameManager.getInstance().getPlayerName(2);
+						winnerScore = GameManager.getInstance().getPlayerScore(2);
+					}
 					
 					gameOver = new Text( Width/2 , Height/2 ,mFont,"Game Over, " + winner + " Wins!", mEngine.getVertexBufferObjectManager());
 					gameOver.setX(Width/2 - gameOver.getWidth()/2);
 					mScene.attachChild(gameOver);
 					mScene.setOnSceneTouchListener(null);
+					
+					// Adding high score to high scores list.
+					// Somehow this works.
+					CommentsDataSource datasource;
+					datasource = new CommentsDataSource(PlayGameActivity.this);
+					datasource.open();
+					datasource.createComment(winner, winnerScore);	// we don't care what is returned since we don't have a list to hook an adaptor to
+					datasource.close();
+				
 				}
 				
 				// Change angle of shell
@@ -495,7 +512,7 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 					Vector2 vel;
 					float velAngle;
 					float torque;
-					float torqueFactor = -0.001f;
+					float torqueFactor = -0.01f;
 					
 					vel = shellBody.getLinearVelocity();
 					velAngle = (float)(Math.atan2(vel.y, vel.x) + (Math.PI / 2));

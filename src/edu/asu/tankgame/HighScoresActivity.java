@@ -73,7 +73,9 @@ public class HighScoresActivity extends Activity { // ListActivity {
 		
 		Comment comment = null;
 		
-		// ADD button
+		////////////////
+		// ADD button //
+		////////////////
 		if (view.getId() == R.id.add) {
 			String[] comments = new String[] { "Drew", "Ben", "Michael" };
 			int randName = new Random().nextInt(3);
@@ -84,7 +86,10 @@ public class HighScoresActivity extends Activity { // ListActivity {
 			comment = datasource.createComment(comments[randName], randScore);
 			adapter.add(comment);
 		}
-		else if (view.getId() == R.id.delete) // DELETE button
+		///////////////////
+		// DELETE button //
+		///////////////////
+		else if (view.getId() == R.id.delete) 
 		{
 			//if (getListAdapter().getCount() > 0) // if extending ListActivity
 			if (lv.getAdapter().getCount() > 0)
