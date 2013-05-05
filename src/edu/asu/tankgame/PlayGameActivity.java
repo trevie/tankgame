@@ -11,7 +11,7 @@ import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.WakeLockOptions;
 import org.andengine.engine.options.resolutionpolicy.FixedResolutionPolicy;
 
-import org.andengine.entity.Entity;
+//import org.andengine.entity.Entity;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
@@ -22,7 +22,7 @@ import org.andengine.entity.text.Text;
 import org.andengine.extension.physics.box2d.FixedStepPhysicsWorld;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
-import org.andengine.extension.physics.box2d.util.Vector2Pool;
+//import org.andengine.extension.physics.box2d.util.Vector2Pool;
 import org.andengine.input.sensor.acceleration.AccelerationData;
 import org.andengine.input.sensor.acceleration.IAccelerationListener;
 import org.andengine.input.touch.TouchEvent;
@@ -39,7 +39,7 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
+//import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -89,12 +89,14 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 	// These should be applied appropriately to all FixtureDef objects, via object.filter.categoryBits 
 
 	// Set up object masks (things they DO collide with)
+	// Note that masks work two ways.  If you want A and B to be able to collide, make sure A's mask include's B and that B's mask includes A.
 	final short MASK_PLAYER_1 = CATEGORY_PLAYER_2 | CATEGORY_SCENERY;  // i.e. P1 items collide with P2 and SCENERY items
 	final short MASK_PLAYER_2 = CATEGORY_PLAYER_1 | CATEGORY_SCENERY;
 	final short MASK_SCENERY  = CATEGORY_PLAYER_1 | CATEGORY_PLAYER_2;
 	// These should be applied appropriately to all FixtureDef objects, via object.filter.maskBits
 	
 	// We don't use filter groups (object.filter.groupIndex)
+	final short GROUP_NONE = 0x0;
 
 	public Font mFont;
 	public Text []mPlayerScore;
@@ -162,10 +164,14 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		//SensorManager.GRAVITY_EARTH
 		//parameters are Density, Elasticity, Friction
 		//final FixtureDef WALL_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.0f, 0.0f, 0.0f, false, CATEGORY_SCENERY, MASK_SCENERY, 0);
-		final FixtureDef WALL_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.0f, 0.0f, 0.0f, false, CATEGORY_SCENERY, MASK_SCENERY, (short)0);
+		final FixtureDef WALL_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.0f, 0.0f, 0.0f, false, CATEGORY_SCENERY, MASK_SCENERY, GROUP_NONE);
 		//final FixtureDef TILE_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.75f, 0.0f, 1.0f);
-		final FixtureDef TILE_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.75f, 0.0f, 1.0f, false, CATEGORY_SCENERY, MASK_SCENERY, (short)0);
+		final FixtureDef TILE_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.75f, 0.0f, 1.0f, false, CATEGORY_SCENERY, MASK_SCENERY, GROUP_NONE);
 		//FixtureDef TILE_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.75f, 0.0f, 1.0f, );
+		final FixtureDef PLAYER_FIXTURE_DEF[] =
+				{PhysicsFactory.createFixtureDef(0.75f, 0.0f, 1.0f, false, CATEGORY_PLAYER_1, MASK_PLAYER_1, GROUP_NONE),
+				PhysicsFactory.createFixtureDef(0.75f, 0.0f, 1.0f, false, CATEGORY_PLAYER_2, MASK_PLAYER_2, GROUP_NONE)
+				};
 		//TILE_FIXTURE_DEF.filter.
 		final Rectangle ground = new Rectangle(0, Height, Width, 1f, this.getVertexBufferObjectManager());
 		final Rectangle roof = new Rectangle(0, -Height, Width, 1f, this.getVertexBufferObjectManager());
@@ -282,7 +288,8 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 					} 
 				if(mPlayerSprites[1][i] != null && mPlayerSprites[0][i] != null)
 				{
-					mPlayerBody[i] = PhysicsFactory.createBoxBody(this.mPhysicsWorld, mPlayerSprites[0][i], BodyType.DynamicBody, TILE_FIXTURE_DEF);
+					//mPlayerBody[i] = PhysicsFactory.createBoxBody(this.mPhysicsWorld, mPlayerSprites[0][i], BodyType.DynamicBody, TILE_FIXTURE_DEF);
+					mPlayerBody[i] = PhysicsFactory.createBoxBody(this.mPhysicsWorld, mPlayerSprites[0][i], BodyType.DynamicBody, PLAYER_FIXTURE_DEF[i]);
 					mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(mPlayerSprites[0][i], mPlayerBody[i], true, true));
 					mPlayerSprites[0][i].attachChild(mPlayerSprites[1][i]);
 					mPlayerSprites[0][i].attachChild(mPlayerSprites[2][i]);
@@ -624,7 +631,12 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 	///////////////////////
 	public void fireBullet()
 	{
-		final FixtureDef TILE_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.50f, 0.0f, 1.0f);		
+		//final FixtureDef TILE_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.50f, 0.0f, 1.0f, false, CATEGORY_SCENERY, MASK_SCENERY, GROUP_NONE);
+		final FixtureDef PLAYER_FIXTURE_DEF[] =
+			{PhysicsFactory.createFixtureDef(0.75f, 0.0f, 1.0f, false, CATEGORY_PLAYER_1, MASK_PLAYER_1, GROUP_NONE),
+			PhysicsFactory.createFixtureDef(0.75f, 0.0f, 1.0f, false, CATEGORY_PLAYER_2, MASK_PLAYER_2, GROUP_NONE)
+			};
+		
 		GameManager gm = GameManager.getInstance();
 		// Sin(angle) * power = Y
 		// Cos(angle) * power = X
@@ -632,6 +644,8 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		float firedForce = GameManager.getInstance().getPlayerPower();
 		float scalarX;
 		float scalarY;
+		
+		int currentPlayer = gm.getCurrentPlayer();	// store this, so we can call togglePlayer() anywhere and not lose the current player
 		
 		//scalarX = (float) Math.cos(firedAngle);
 		//scalarY = (float) Math.sin(firedAngle);
@@ -666,20 +680,19 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		gm.togglePlayer();	// switch current player turn
 		
 		//int shellDistance = 41;
-		int shellDistance = 80;
+		int shellDistance = 0;
 		shellSprite = new Sprite( positionX + scalarX * shellDistance, positionY + scalarY * shellDistance, ResourceManager.getInstance().mShellTextureRegion, mEngine.getVertexBufferObjectManager());
-		Log.w("firebullet", "P" + GameManager.getInstance().getCurrentPlayer() + " center is at (" + positionX + "," + positionY + ").  Putting shell (angle "+firedAngle+") top-left at (" + shellSprite.getX() + "," + shellSprite.getY() + ")");
+		//Log.w("firebullet", "P" + GameManager.getInstance().getCurrentPlayer() + " center is at (" + positionX + "," + positionY + ").  Putting shell (angle "+firedAngle+") top-left at (" + shellSprite.getX() + "," + shellSprite.getY() + ")");
 		shellSprite.setRotationCenter((float) (shellSprite.getWidth()/2.0f), (float)(shellSprite.getHeight()/2.0f));
 		shellSprite.setRotation(-firedAngle);
 		mScene.attachChild(shellSprite);
-		shellBody = PhysicsFactory.createBoxBody(this.mPhysicsWorld, shellSprite, BodyType.DynamicBody, TILE_FIXTURE_DEF);
+		//shellBody = PhysicsFactory.createBoxBody(this.mPhysicsWorld, shellSprite, BodyType.DynamicBody, TILE_FIXTURE_DEF);
+		shellBody = PhysicsFactory.createBoxBody(this.mPhysicsWorld, shellSprite, BodyType.DynamicBody, PLAYER_FIXTURE_DEF[currentPlayer-1]);
 		mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(shellSprite, shellBody, true, true));
 //		shellBody.setWorldCenter(15,3);
 		
-
-		
 		shellBody.applyForce(new Vector2(scalarX * firedForce/2,scalarY * firedForce/2), new Vector2(shellBody.getWorldCenter().x, shellBody.getWorldCenter().y));
-		Log.w("firebullet", "P" + GameManager.getInstance().getCurrentPlayer() + "'s shell's force is (" + (scalarX*firedForce/2) + "," + (scalarY*firedForce/2) + ")");
+		//Log.w("firebullet", "P" + GameManager.getInstance().getCurrentPlayer() + "'s shell's force is (" + (scalarX*firedForce/2) + "," + (scalarY*firedForce/2) + ")");
 
 		PowerBar[2].setY(16 + 208 * ((100 - gm.getPlayerPower())/100));
 		//AngleBar[2].setY(16 + 208 * ((180 - gm.getPlayerAngle())/180));
