@@ -18,7 +18,6 @@ public class GameManager {
 	public boolean gameOver;
 	public boolean saveLevel;
 
-
 	public static final int maxPlayers = 2;	
 	public static final float initialPlayerHealth = 100;
 	

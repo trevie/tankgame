@@ -15,5 +15,6 @@
     <string name="action_settings">Settings</string>
     <string name="btnAddNew">Add New</string>
     <string name="btnDeleteFirst">Delete First</string>
+    <string name="btnClearHighScores">Clear High Scores</string>
 
 </resources>
