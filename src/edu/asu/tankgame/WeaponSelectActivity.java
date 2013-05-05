@@ -10,7 +10,10 @@ import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,11 +30,16 @@ public class WeaponSelectActivity extends Activity {
 		setContentView(R.layout.activity_weapon_select);
 		// Show the Up button in the action bar.
 		weaponsListView = (ListView) findViewById(R.id.listView1);
-		String[] WeaponArray = new String[20];
-		for(int i=0; i < WeaponArray.length; i++){
-        	WeaponArray[i] = "Weapon " + i;
-        }
-		arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, WeaponArray)
+		final String[] WeaponArray = new String[3];
+		
+        WeaponArray[0] = "Baby Missile Mode";
+        WeaponArray[1] = "Missile Mode";
+        WeaponArray[2] = "Nuke Mode";
+        
+       
+       
+        
+		arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_single_choice, WeaponArray)
 		{
 
 	        @Override
@@ -42,14 +50,43 @@ public class WeaponSelectActivity extends Activity {
 	            TextView textView=(TextView) view.findViewById(android.R.id.text1);
 
 	            /*YOUR CHOICE OF COLOR*/
+	            
 	            textView.setTextColor(Color.RED);
 
 	            return view;
 	        }
+	        
+	        
 	    };
+	    
+	    
+	    
 		weaponsListView.setAdapter(arrayAdapter);
+		weaponsListView.getSelectedItem();
+		
+		weaponsListView.setOnItemClickListener(new OnItemClickListener(){
+
+        	protected void onListItemClick(){
+
+        	//Do stuff
+        	}
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View view, int position,
+					long id) {
+				String type = (String) ((TextView)view).getText();
+				GameManager Size = new GameManager();
+				Size.setWeaponSize(type);
+				
+			}
+        });
+		
 		setupActionBar();
+		
+		
 	}
+	
+	
 
 	/**
 	 * Set up the {@link android.app.ActionBar}, if the API is available.
