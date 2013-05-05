@@ -181,9 +181,9 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 				};
 		//TILE_FIXTURE_DEF.filter.
 		final Rectangle ground = new Rectangle(0, Height, Width, 1f, this.getVertexBufferObjectManager());
-		final Rectangle roof = new Rectangle(0, -Height, Width, 1f, this.getVertexBufferObjectManager());
-		final Rectangle left = new Rectangle(0, -Height, 1f, Height*2, this.getVertexBufferObjectManager());
-		final Rectangle right = new Rectangle(Width, -Height, 1f, Height*2, this.getVertexBufferObjectManager());
+		final Rectangle roof = new Rectangle(0, -3*Height, Width, 1f, this.getVertexBufferObjectManager());
+		final Rectangle left = new Rectangle(0, -3*Height, 1f, Height*4, this.getVertexBufferObjectManager());
+		final Rectangle right = new Rectangle(Width, -3*Height, 1f, Height*4, this.getVertexBufferObjectManager());
 		ground.setColor(0f,0f,0f);
 		roof.setColor(0f,0f,0f);
 		left.setColor(0f,0f,0f);
@@ -499,17 +499,68 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 				if(GameManager.getInstance().gameOver == true && gameOver == null)
 				{
 					String winner;
+					int winnerScore;
+					
 					if(GameManager.getInstance().getPlayerHealth(1) >= GameManager.getInstance().getPlayerHealth(2))
+					{
 						winner = GameManager.getInstance().getPlayerName(1);
+						winnerScore = GameManager.getInstance().getPlayerScore(1);
+					}
 					else
+					{
 						winner = GameManager.getInstance().getPlayerName(2);
+						winnerScore = GameManager.getInstance().getPlayerScore(2);
+					}
 					
 					gameOver = new Text( Width/2 , Height/2 ,mFont,"Game Over, " + winner + " Wins!", mEngine.getVertexBufferObjectManager());
 					gameOver.setX(Width/2 - gameOver.getWidth()/2);
 					mScene.attachChild(gameOver);
 					mScene.setOnSceneTouchListener(null);
+					
+					// Adding high score to high scores list.
+					// Somehow this works.
+					CommentsDataSource datasource;
+					datasource = new CommentsDataSource(PlayGameActivity.this);
+					datasource.open();
+					datasource.createComment(winner, winnerScore);	// we don't care what is returned since we don't have a list to hook an adaptor to
+					datasource.close();
+				
 				}
-			}
+				
+				// Change angle of shell
+				if (shellBody != null)
+				{
+					Vector2 vel;
+					float velAngle;
+					float torque;
+					float torqueFactor = -0.01f;
+					
+					vel = shellBody.getLinearVelocity();
+					velAngle = (float)(Math.atan2(vel.y, vel.x) + (Math.PI / 2));
+					
+					// Method 2 - http://www.box2d.org/forum/viewtopic.php?f=3&t=170&sid=cd964130072d8450a7e9ffcefcab8f73
+					
+					//float angVelDelta = shellBody.getAngle() - velAngle;
+					//while (angVelDelta > Math.PI)
+					//	angVelDelta -= 2*Math.PI;
+					//while (angVelDelta < -Math.PI)
+					//	angVelDelta += 2*Math.PI;
+					
+					//float absVel = vel.len();
+					//Log.w("onUpdate", "Angle " + shellBody.getAngle() + ", AngularVelocity " + shellBody.getAngularVelocity() + ", velAngle " + velAngle);
+					//torque = absVel * torqueFactor * (angVelDelta) - absVel * shellBody.getAngularVelocity() * (-torqueFactor);
+					//shellBody.applyTorque(torque);
+					//Log.w("onUpdate","torqueing shot by " + torque);
+					
+					// Method 1
+					Log.w("onUpdate", "Angle " + shellBody.getAngle() + " (" + shellBody.getAngle()*180/Math.PI + "degrees), velAngle " + velAngle + "(" + velAngle*180/Math.PI + " degrees)");
+					torque =  torqueFactor * (shellBody.getAngle() - velAngle);
+					//shellBody.applyTorque(torque);
+					shellBody.setAngularVelocity(torque);
+					Log.w("onUpdate","torqueing shot by " + torque);
+				}
+				
+			} // onUpdate()
 			
 			@Override
 			public void reset() {};
@@ -702,23 +753,20 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		
 		//int shellDistance = 41;
 		int shellDistance = 0;
-		shellSprite = new Sprite( positionX + scalarX * shellDistance, positionY + scalarY * shellDistance, ResourceManager.getInstance().mShellTextureRegion, mEngine.getVertexBufferObjectManager());
-		//Log.w("firebullet", "P" + GameManager.getInstance().getCurrentPlayer() + " center is at (" + positionX + "," + positionY + ").  Putting shell (angle "+firedAngle+") top-left at (" + shellSprite.getX() + "," + shellSprite.getY() + ")");
+		shellSprite = new Sprite(positionX + scalarX * shellDistance, positionY + scalarY * shellDistance, ResourceManager.getInstance().mShellTextureRegion, mEngine.getVertexBufferObjectManager());
 		shellSprite.setRotationCenter((float) (shellSprite.getWidth()/2.0f), (float)(shellSprite.getHeight()/2.0f));
 		shellSprite.setRotation(-firedAngle);
 		mScene.attachChild(shellSprite);
-		//shellBody = PhysicsFactory.createBoxBody(this.mPhysicsWorld, shellSprite, BodyType.DynamicBody, TILE_FIXTURE_DEF);
 		shellBody = PhysicsFactory.createBoxBody(this.mPhysicsWorld, shellSprite, BodyType.DynamicBody, PLAYER_FIXTURE_DEF[currentPlayer-1]);
 		mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(shellSprite, shellBody, true, true));
 //		shellBody.setWorldCenter(15,3);
 		
 		shellBody.applyForce(new Vector2(scalarX * firedForce/2,scalarY * firedForce/2), new Vector2(shellBody.getWorldCenter().x, shellBody.getWorldCenter().y));
-		//Log.w("firebullet", "P" + GameManager.getInstance().getCurrentPlayer() + "'s shell's force is (" + (scalarX*firedForce/2) + "," + (scalarY*firedForce/2) + ")");
+		//shellBody.applyTorque(100); // *** testing.  No idea of scale here 
 
 		PowerBar[2].setY(16 + 208 * ((100 - gm.getPlayerPower())/100));
-		//AngleBar[2].setY(16 + 208 * ((180 - gm.getPlayerAngle())/180));
-		AngleBar[2].setY(16 + 208 * (( gm.getPlayerAngle())/180)); // Mike's tweak (3/3) to fix inverted angle bar
-		ResourceManager.getInstance().mFiringSound.play();		// "boom"
+		AngleBar[2].setY(16 + 208 * (( gm.getPlayerAngle())/180)); 	// Mike's tweak (3/3) to fix inverted angle bar
+		ResourceManager.getInstance().mFiringSound.play();			// "boom"
 		if(mExplosion != null)
 			SpritesToDetach.add(mExplosion);
 		
