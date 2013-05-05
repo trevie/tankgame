@@ -14,6 +14,10 @@ public class GameManager {
 	private String[] playerName;
 	private int[] playerScore;
 	private int currentPlayer;
+	
+	private int weaponForce;
+		
+	public boolean gameOver;
 
 	public static final int maxPlayers = 2;	
 	public static final float initialPlayerHealth = 100;
@@ -25,9 +29,14 @@ public class GameManager {
 		playerAngle = new float[maxPlayers];
 		playerPower = new float[maxPlayers];
 		playerName = new String[maxPlayers];
+		for(int i = 1; i <= maxPlayers; i++)
+			playerName[i-1] = "Player" + i;
 		playerScore = new int[maxPlayers];
+		weaponForce = 1;
+		
 		
 		currentPlayer = 0;
+		gameOver = false;
 		
 		for(int i = 0; i < maxPlayers; i++)
 		{
@@ -155,6 +164,10 @@ public class GameManager {
 				playerHealth[player - 1] = playerHealth[player - 1] - damage;
 				incrementPlayerScore(dealtBy, (int)damage*10);
 			}
+			if(playerHealth[player - 1] <= 0)
+			{
+				gameOver = true;
+			}
 		}
 	}
 	
@@ -261,5 +274,15 @@ public class GameManager {
 	public int getCurrentPlayer()
 	{
 		return currentPlayer + 1;
+	}
+
+	public void setWeaponForce(int force)
+	{
+		weaponForce = force;
+	}
+	
+	public int getWeaponForce()
+	{
+		return weaponForce;
 	}
 }

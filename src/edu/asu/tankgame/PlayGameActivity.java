@@ -18,6 +18,7 @@ import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.sprite.Sprite;
+import org.andengine.entity.text.Text;
 import org.andengine.extension.physics.box2d.FixedStepPhysicsWorld;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
@@ -25,6 +26,8 @@ import org.andengine.extension.physics.box2d.util.Vector2Pool;
 import org.andengine.input.sensor.acceleration.AccelerationData;
 import org.andengine.input.sensor.acceleration.IAccelerationListener;
 import org.andengine.input.touch.TouchEvent;
+import org.andengine.opengl.font.Font;
+import org.andengine.opengl.font.FontFactory;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.ui.activity.BaseGameActivity;
 
@@ -38,6 +41,8 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
 
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.hardware.SensorManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -90,6 +95,10 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 	// These should be applied appropriately to all FixtureDef objects, via object.filter.maskBits
 	
 	// We don't use filter groups (object.filter.groupIndex)
+
+	public Font mFont;
+	public Text []mPlayerScore;
+	public Text gameOver;
 	
 	@Override
 	public Engine onCreateEngine(final EngineOptions pEngineOptions)
@@ -123,6 +132,10 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 	@Override
 	public void onCreateResources( OnCreateResourcesCallback pOnCreateResourcesCallback)
 	{
+		mFont = FontFactory.create(mEngine.getFontManager(), mEngine.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.NORMAL), 32f, true, Color.WHITE);
+		mFont.load();
+		mFont.prepareLetters("abcdefghiklmnopqrstuvwxyzABCDEFGHIJKLMNOP 1234567890".toCharArray());
+		
 		ResourceManager.getInstance().loadGameTextures(mEngine, this);
 		ResourceManager.getInstance().loadSounds(mEngine, this);
 		
@@ -135,6 +148,7 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 	public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback)
 	{
 		// Create the scene object and background roughly sky colored
+		gameOver = null;
 		mScene = new Scene();
 		Background background = new Background(0.45f,0.69f,0.85f,1f);
 		mScene.setBackground(background);
@@ -182,6 +196,7 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		mPlayerBody = new Body[GameManager.maxPlayers];
 		PowerBar = new Sprite[3];
 		AngleBar = new Sprite[3];
+		mPlayerScore = new Text[GameManager.maxPlayers];
 				
 		for(int i = 0; i < mLevelSprites.length; i++)
 			for(int j = 0; j < mLevelSprites[i].length; j++)
@@ -300,6 +315,12 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		fireButton.setColor(1,1,1,0.5f);
 		mScene.attachChild(fireButton);
 		
+		for(int i = 0; i < GameManager.maxPlayers; i++)
+		{
+			mPlayerScore[i] = new Text(0,32*i,mFont,GameManager.getInstance().getPlayerName(i+1) + ": " + GameManager.getInstance().getPlayerScore(i+1), 50, mEngine.getVertexBufferObjectManager());
+			mScene.attachChild(mPlayerScore[i]);
+		}
+		
 		// Notify the callback that we've finished creating the scene
 		ResourceManager.getInstance().mMusic.play();
 		mScene.setOnSceneTouchListener(this);
@@ -363,9 +384,26 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 				{
 					Log.w("Shell" , "impacted");
 					ResourceManager.getInstance().mHitSound.play();
-					// explosion code
 					mExplosion = new AnimatedSprite(shellSprite.getX(), shellSprite.getY(), ResourceManager.getInstance().mExplosionTextureRegion, mEngine.getVertexBufferObjectManager());
+					mExplosion.setScale((float) GameManager.getInstance().getWeaponForce());
 					mExplosion.animate(100, false);
+					// explosion code
+					// destroy tiles
+					for(int i = 0; i < mLevelSprites.length; i++)
+						for(int j = 0; j < mLevelSprites[i].length; j++)
+						{
+							if(mLevelSprites[i][j] != null && mLevelSprites[i][j].collidesWith(mExplosion))
+							{
+								BodiesToDestroy.add(mLevelBody[i][j]);
+								SpritesToDetach.add(mLevelSprites[i][j]);
+								mLevelBody[i][j] = null;
+								mLevelSprites[i][j] = null;
+							}
+						}
+					// push players
+					// ToDo
+					// damage players
+					// ToDo
 					mScene.attachChild(mExplosion);
 					BodiesToDestroy.add(shellBody);
 					SpritesToDetach.add(shellSprite);
@@ -403,12 +441,23 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 			}
 		};
 		mPhysicsWorld.setContactListener(contactListener);
+		
 		mScene.registerUpdateHandler(new IUpdateHandler() {
 			@Override
 			public void onUpdate(float pSecondsElapsed)
 			{
-				mPlayerSprites[0][0].setColor(0.0f, 1.0f, 0.0f, GameManager.getInstance().getPlayerHealth(1)/100f);
-				mPlayerSprites[0][1].setColor(1.0f, 0.0f, 0.0f, GameManager.getInstance().getPlayerHealth(2)/100f);
+				mPlayerScore[0].setText(GameManager.getInstance().getPlayerName(1) + ": " + GameManager.getInstance().getPlayerScore(1));
+				mPlayerScore[1].setText(GameManager.getInstance().getPlayerName(2) + ": " + GameManager.getInstance().getPlayerScore(2));
+
+				if(GameManager.getInstance().getPlayerHealth(1) > 0)
+					mPlayerSprites[0][0].setColor(0.0f, 1.0f, 0.0f, GameManager.getInstance().getPlayerHealth(1)/100f);
+				else
+					mPlayerSprites[0][0].setColor(0.0f, 1.0f, 0.0f, 0.0f);
+				if(GameManager.getInstance().getPlayerHealth(2) > 0)
+					mPlayerSprites[0][1].setColor(1.0f, 0.0f, 0.0f, GameManager.getInstance().getPlayerHealth(2)/100f);
+				else
+					mPlayerSprites[0][1].setColor(1.0f, 0.0f, 0.0f,0.0f);
+
 				while(!SpritesToDetach.isEmpty())
 				{
 					Log.w("Update", "Delete Sprite " + SpritesToDetach.size());
@@ -418,6 +467,19 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 				{
 					Log.w("Update", "Destroy Body " + BodiesToDestroy.size());
 					mPhysicsWorld.destroyBody(BodiesToDestroy.remove(0));			
+				}
+				if(GameManager.getInstance().gameOver == true && gameOver == null)
+				{
+					String winner;
+					if(GameManager.getInstance().getPlayerHealth(1) >= GameManager.getInstance().getPlayerHealth(2))
+						winner = GameManager.getInstance().getPlayerName(1);
+					else
+						winner = GameManager.getInstance().getPlayerName(2);
+					
+					gameOver = new Text( Width/2 , Height/2 ,mFont,"Game Over, " + winner + " Wins!", mEngine.getVertexBufferObjectManager());
+					gameOver.setX(Width/2 - gameOver.getWidth()/2);
+					mScene.attachChild(gameOver);
+					mScene.setOnSceneTouchListener(null);
 				}
 			}
 			
