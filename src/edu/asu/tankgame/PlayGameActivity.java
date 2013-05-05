@@ -163,17 +163,11 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		mScene.registerUpdateHandler(mPhysicsWorld); 
 		//SensorManager.GRAVITY_EARTH
 		//parameters are Density, Elasticity, Friction
-<<<<<<< HEAD
-		final FixtureDef WALL_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.0f, 0.0f, 0.0f);
-		//final FixtureDef WALL_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.0f, 0.0f, 0.0f, false, CATEGORY_SCENERY, MASK_SCENERY, (short)0);
-		final FixtureDef TILE_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.75f, 0.0f, 1.0f);
-		//final FixtureDef TILE_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.75f, 0.0f, 1.0f, false, CATEGORY_SCENERY, MASK_SCENERY, (short)0);
-=======
+
 		//final FixtureDef WALL_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.0f, 0.0f, 0.0f, false, CATEGORY_SCENERY, MASK_SCENERY, 0);
 		final FixtureDef WALL_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.0f, 0.0f, 0.0f, false, CATEGORY_SCENERY, MASK_SCENERY, GROUP_NONE);
 		//final FixtureDef TILE_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.75f, 0.0f, 1.0f);
 		final FixtureDef TILE_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.75f, 0.0f, 1.0f, false, CATEGORY_SCENERY, MASK_SCENERY, GROUP_NONE);
->>>>>>> 2b93bf1fb24ebbc8c5b08d79098d63dad0bccb49
 		//FixtureDef TILE_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.75f, 0.0f, 1.0f, );
 		final FixtureDef PLAYER_FIXTURE_DEF[] =
 				{PhysicsFactory.createFixtureDef(0.75f, 0.0f, 1.0f, false, CATEGORY_PLAYER_1, MASK_PLAYER_1, GROUP_NONE),

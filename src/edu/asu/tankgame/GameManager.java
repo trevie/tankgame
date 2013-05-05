@@ -16,7 +16,6 @@ public class GameManager {
 	private int currentPlayer;	
 	private int weaponForce;		
 	public boolean gameOver;
-	private int weaponSize;
 
 
 	public static final int maxPlayers = 1;	
@@ -58,13 +57,13 @@ public class GameManager {
 	public void setWeaponSize(String Mode)
 	{
 		if (Mode == "Baby Missile Mode"){
-			weaponSize=1;
+			weaponForce=1;
 		}
 		if (Mode == "Missile Mode"){
-			weaponSize=2;
+			weaponForce=2;
 		}
 		if (Mode == "Nuke Mode"){
-			weaponSize=4;
+			weaponForce=4;
 		}
 	}
 	
@@ -297,5 +296,5 @@ public class GameManager {
 	public int getWeaponForce()
 	{
 		return weaponForce;
-	}
+	} 
 }
