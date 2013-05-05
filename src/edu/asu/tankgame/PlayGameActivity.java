@@ -563,11 +563,11 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 					//Log.w("onUpdate","torqueing shot by " + torque);
 					
 					// Method 1
-					Log.w("onUpdate", "Angle " + shellBody.getAngle() + " (" + shellBody.getAngle()*180/Math.PI + "degrees), velAngle " + velAngle + "(" + velAngle*180/Math.PI + " degrees)");
+					//Log.w("onUpdate", "Angle " + shellBody.getAngle() + " (" + shellBody.getAngle()*180/Math.PI + "degrees), velAngle " + velAngle + "(" + velAngle*180/Math.PI + " degrees)");
 					torque =  torqueFactor * (shellBody.getAngle() - velAngle);
 					//shellBody.applyTorque(torque);
 					shellBody.setAngularVelocity(torque);
-					Log.w("onUpdate","torqueing shot by " + torque);
+					//Log.w("onUpdate","torqueing shot by " + torque);
 				}
 				
 			} // onUpdate()
