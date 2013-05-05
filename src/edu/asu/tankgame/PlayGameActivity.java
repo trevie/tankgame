@@ -488,7 +488,41 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 					mScene.attachChild(gameOver);
 					mScene.setOnSceneTouchListener(null);
 				}
-			}
+				
+				// Change angle of shell
+				if (shellBody != null)
+				{
+					Vector2 vel;
+					float velAngle;
+					float torque;
+					float torqueFactor = -0.001f;
+					
+					vel = shellBody.getLinearVelocity();
+					velAngle = (float)(Math.atan2(vel.y, vel.x) + (Math.PI / 2));
+					
+					// Method 2 - http://www.box2d.org/forum/viewtopic.php?f=3&t=170&sid=cd964130072d8450a7e9ffcefcab8f73
+					
+					//float angVelDelta = shellBody.getAngle() - velAngle;
+					//while (angVelDelta > Math.PI)
+					//	angVelDelta -= 2*Math.PI;
+					//while (angVelDelta < -Math.PI)
+					//	angVelDelta += 2*Math.PI;
+					
+					//float absVel = vel.len();
+					//Log.w("onUpdate", "Angle " + shellBody.getAngle() + ", AngularVelocity " + shellBody.getAngularVelocity() + ", velAngle " + velAngle);
+					//torque = absVel * torqueFactor * (angVelDelta) - absVel * shellBody.getAngularVelocity() * (-torqueFactor);
+					//shellBody.applyTorque(torque);
+					//Log.w("onUpdate","torqueing shot by " + torque);
+					
+					// Method 1
+					Log.w("onUpdate", "Angle " + shellBody.getAngle() + " (" + shellBody.getAngle()*180/Math.PI + "degrees), velAngle " + velAngle + "(" + velAngle*180/Math.PI + " degrees)");
+					torque =  torqueFactor * (shellBody.getAngle() - velAngle);
+					//shellBody.applyTorque(torque);
+					shellBody.setAngularVelocity(torque);
+					Log.w("onUpdate","torqueing shot by " + torque);
+				}
+				
+			} // onUpdate()
 			
 			@Override
 			public void reset() {};
@@ -681,23 +715,20 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		
 		//int shellDistance = 41;
 		int shellDistance = 0;
-		shellSprite = new Sprite( positionX + scalarX * shellDistance, positionY + scalarY * shellDistance, ResourceManager.getInstance().mShellTextureRegion, mEngine.getVertexBufferObjectManager());
-		//Log.w("firebullet", "P" + GameManager.getInstance().getCurrentPlayer() + " center is at (" + positionX + "," + positionY + ").  Putting shell (angle "+firedAngle+") top-left at (" + shellSprite.getX() + "," + shellSprite.getY() + ")");
+		shellSprite = new Sprite(positionX + scalarX * shellDistance, positionY + scalarY * shellDistance, ResourceManager.getInstance().mShellTextureRegion, mEngine.getVertexBufferObjectManager());
 		shellSprite.setRotationCenter((float) (shellSprite.getWidth()/2.0f), (float)(shellSprite.getHeight()/2.0f));
 		shellSprite.setRotation(-firedAngle);
 		mScene.attachChild(shellSprite);
-		//shellBody = PhysicsFactory.createBoxBody(this.mPhysicsWorld, shellSprite, BodyType.DynamicBody, TILE_FIXTURE_DEF);
 		shellBody = PhysicsFactory.createBoxBody(this.mPhysicsWorld, shellSprite, BodyType.DynamicBody, PLAYER_FIXTURE_DEF[currentPlayer-1]);
 		mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(shellSprite, shellBody, true, true));
 //		shellBody.setWorldCenter(15,3);
 		
 		shellBody.applyForce(new Vector2(scalarX * firedForce/2,scalarY * firedForce/2), new Vector2(shellBody.getWorldCenter().x, shellBody.getWorldCenter().y));
-		//Log.w("firebullet", "P" + GameManager.getInstance().getCurrentPlayer() + "'s shell's force is (" + (scalarX*firedForce/2) + "," + (scalarY*firedForce/2) + ")");
+		//shellBody.applyTorque(100); // *** testing.  No idea of scale here 
 
 		PowerBar[2].setY(16 + 208 * ((100 - gm.getPlayerPower())/100));
-		//AngleBar[2].setY(16 + 208 * ((180 - gm.getPlayerAngle())/180));
-		AngleBar[2].setY(16 + 208 * (( gm.getPlayerAngle())/180)); // Mike's tweak (3/3) to fix inverted angle bar
-		ResourceManager.getInstance().mFiringSound.play();		// "boom"
+		AngleBar[2].setY(16 + 208 * (( gm.getPlayerAngle())/180)); 	// Mike's tweak (3/3) to fix inverted angle bar
+		ResourceManager.getInstance().mFiringSound.play();			// "boom"
 		if(mExplosion != null)
 			SpritesToDetach.add(mExplosion);
 		
