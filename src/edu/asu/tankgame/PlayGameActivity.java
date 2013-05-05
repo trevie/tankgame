@@ -75,6 +75,22 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 	public ArrayList <Sprite> SpritesToDetach;
 	public ArrayList <Body> BodiesToDestroy;
 	
+	// *** Mike working on collision filtering
+	// http://www.aurelienribon.com/blog/2011/07/box2d-tutorial-collision-filtering/
+	// Set up object categories
+	final short CATEGORY_PLAYER_1 = 0x0001;
+	final short CATEGORY_PLAYER_2 = 0x0002;
+	final short CATEGORY_SCENERY  = 0x0004;
+	// These should be applied appropriately to all FixtureDef objects, via object.filter.categoryBits 
+
+	// Set up object masks (things they DO collide with)
+	final short MASK_PLAYER_1 = CATEGORY_PLAYER_2 | CATEGORY_SCENERY;  // i.e. P1 items collide with P2 and SCENERY items
+	final short MASK_PLAYER_2 = CATEGORY_PLAYER_1 | CATEGORY_SCENERY;
+	final short MASK_SCENERY  = CATEGORY_PLAYER_1 | CATEGORY_PLAYER_2;
+	// These should be applied appropriately to all FixtureDef objects, via object.filter.maskBits
+	
+	// We don't use filter groups (object.filter.groupIndex)
+	
 	@Override
 	public Engine onCreateEngine(final EngineOptions pEngineOptions)
 	{
@@ -131,8 +147,12 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		mScene.registerUpdateHandler(mPhysicsWorld); 
 		//SensorManager.GRAVITY_EARTH
 		//parameters are Density, Elasticity, Friction
-		final FixtureDef WALL_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.0f, 0.0f, 0.0f);
-		final FixtureDef TILE_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.75f, 0.0f, 1.0f);
+		//final FixtureDef WALL_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.0f, 0.0f, 0.0f, false, CATEGORY_SCENERY, MASK_SCENERY, 0);
+		final FixtureDef WALL_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.0f, 0.0f, 0.0f, false, CATEGORY_SCENERY, MASK_SCENERY, (short)0);
+		//final FixtureDef TILE_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.75f, 0.0f, 1.0f);
+		final FixtureDef TILE_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.75f, 0.0f, 1.0f, false, CATEGORY_SCENERY, MASK_SCENERY, (short)0);
+		//FixtureDef TILE_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.75f, 0.0f, 1.0f, );
+		//TILE_FIXTURE_DEF.filter.
 		final Rectangle ground = new Rectangle(0, Height, Width, 1f, this.getVertexBufferObjectManager());
 		final Rectangle roof = new Rectangle(0, -Height, Width, 1f, this.getVertexBufferObjectManager());
 		final Rectangle left = new Rectangle(0, -Height, 1f, Height*2, this.getVertexBufferObjectManager());
@@ -496,7 +516,7 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 				//Log.w("isAngleTouch", "P" + gm.getCurrentPlayer() + " angle is (" + tempX + " - " + lastTouchX + ") / 20 = " + ((tempX-lastTouchX)/20) + "r.");
 				gm.changePlayerAngle(gm.getCurrentPlayer(), (tempX - lastTouchX)/20);	
 				//AngleBar[2].setY(16 + 208 * ((180 - gm.getPlayerAngle(gm.getCurrentPlayer()))/180));
-				AngleBar[2].setY(16 + 208 * (( gm.getPlayerAngle(gm.getCurrentPlayer()))/180)); // Mike's tweak (2/2) to fix inverted angle bar
+				AngleBar[2].setY(16 + 208 * (( gm.getPlayerAngle(gm.getCurrentPlayer()))/180)); // Mike's tweak (2/3) to fix inverted angle bar
 				if(gm.getPlayerAngle(gm.getCurrentPlayer()) <= 90) // If facing left...
 				{
 					Sprite tT = mPlayerSprites[1][(gm.getCurrentPlayer()-1)];	// T for Tank
@@ -537,6 +557,9 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		return false;
 	}
 	
+	///////////////////////
+	// FIRE ZEE MISSILES //
+	///////////////////////
 	public void fireBullet()
 	{
 		final FixtureDef TILE_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.50f, 0.0f, 1.0f);		
@@ -548,26 +571,41 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		float scalarX;
 		float scalarY;
 		
-		scalarX = (float) Math.cos(firedAngle);
-		scalarY = (float) Math.sin(firedAngle);
+		//scalarX = (float) Math.cos(firedAngle);
+		//scalarY = (float) Math.sin(firedAngle);
+		// Math.poo take RADIANS
+		scalarX = (float) Math.cos(firedAngle*Math.PI/180);
+		scalarY = (float) Math.sin(firedAngle*Math.PI/180);
+		//Log.w("firebullet","Raw scalers: " + firedAngle + " degrees -> (" + scalarX + ", " + scalarY + ")");
+		
 		// Quadrants where operations are positive
 		// 0-90:    All
 		// 90-180:  Sin
 		// 180-270: Tan
 		// 270-360: Cos
-		if (firedAngle > 90 && firedAngle < 180)
+		//
+		// REMEMBER: (0,0) is the TOP-LEFT of the screen
+
+		if (firedAngle >= 0 && firedAngle < 90)
 		{
-			scalarX = -scalarX;
-			scalarY = -scalarY;
+			scalarX = Math.abs(scalarX);
+			scalarY = -Math.abs(scalarY);	// negative since Y=0 is at the TOP
 		}
+		else  if (firedAngle >= 90 && firedAngle <= 180)
+		{
+			scalarY = -Math.abs(scalarY);	// negative since Y=0 is at the TOP
+		}
+		
+		//Log.w("firebullet","Mod scalers: " + firedAngle + " degrees -> (" + scalarX + ", " + scalarY + ")");
 		
 		float positionX = mPlayerSprites[0][gm.getCurrentPlayer() - 1].getX() + 23;
 		float positionY = mPlayerSprites[0][gm.getCurrentPlayer() - 1].getY() + 14;
 		
-		gm.togglePlayer();
-
+		gm.togglePlayer();	// switch current player turn
 		
-		shellSprite = new Sprite( positionX + scalarX * 41, positionY + scalarY * 41, ResourceManager.getInstance().mShellTextureRegion, mEngine.getVertexBufferObjectManager());
+		//int shellDistance = 41;
+		int shellDistance = 80;
+		shellSprite = new Sprite( positionX + scalarX * shellDistance, positionY + scalarY * shellDistance, ResourceManager.getInstance().mShellTextureRegion, mEngine.getVertexBufferObjectManager());
 		Log.w("firebullet", "P" + GameManager.getInstance().getCurrentPlayer() + " center is at (" + positionX + "," + positionY + ").  Putting shell (angle "+firedAngle+") top-left at (" + shellSprite.getX() + "," + shellSprite.getY() + ")");
 		shellSprite.setRotationCenter((float) (shellSprite.getWidth()/2.0f), (float)(shellSprite.getHeight()/2.0f));
 		shellSprite.setRotation(-firedAngle);
@@ -575,14 +613,20 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		shellBody = PhysicsFactory.createBoxBody(this.mPhysicsWorld, shellSprite, BodyType.DynamicBody, TILE_FIXTURE_DEF);
 		mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(shellSprite, shellBody, true, true));
 //		shellBody.setWorldCenter(15,3);
+		
 
+		
 		shellBody.applyForce(new Vector2(scalarX * firedForce/2,scalarY * firedForce/2), new Vector2(shellBody.getWorldCenter().x, shellBody.getWorldCenter().y));
+		Log.w("firebullet", "P" + GameManager.getInstance().getCurrentPlayer() + "'s shell's force is (" + (scalarX*firedForce/2) + "," + (scalarY*firedForce/2) + ")");
 
 		PowerBar[2].setY(16 + 208 * ((100 - gm.getPlayerPower())/100));
-		AngleBar[2].setY(16 + 208 * ((180 - gm.getPlayerAngle())/180));
+		//AngleBar[2].setY(16 + 208 * ((180 - gm.getPlayerAngle())/180));
+		AngleBar[2].setY(16 + 208 * (( gm.getPlayerAngle())/180)); // Mike's tweak (3/3) to fix inverted angle bar
 		ResourceManager.getInstance().mFiringSound.play();		// "boom"
 		if(mExplosion != null)
 			SpritesToDetach.add(mExplosion);
+		
+		//gm.togglePlayer();	// switch current player turn
 	}
 	
 	public boolean isBodyContacted(Body pBody, Contact pContact)

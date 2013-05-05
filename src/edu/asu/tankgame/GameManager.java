@@ -184,7 +184,7 @@ public class GameManager {
 	
 	public boolean changePlayerAngle(int player, float angle)
 	{
-		angle = -angle; // Mike's tweak (1/2) to fix inverted angle bar
+		angle = -angle; // Mike's tweak (1/3) to fix inverted angle bar
 		if(player > 0 && player <= maxPlayers)
 		{
 			float originalPower = this.playerAngle[player -1];

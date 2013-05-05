@@ -86,7 +86,7 @@ public class ResourceManager {
 		
 		mFireTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, pContext, "firebutton.png");
 		
-		mExplosionTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mBitmapTextureAtlas, pContext, "explosion.jpg", 4, 3);
+		mExplosionTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mBitmapTextureAtlas, pContext, "explosion.png", 4, 3);
 		
 		
 		try {
