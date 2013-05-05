@@ -10,7 +10,6 @@ import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -24,7 +23,8 @@ public class WeaponSelectActivity extends Activity {
 	
 	public final static String EXTRA_MESSAGE = "edu.asu.tankgame.message";	// a key for passing extras
 	ListView weaponsListView;
-	ArrayAdapter arrayAdapter;
+	ArrayAdapter<String> arrayAdapter;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +41,7 @@ public class WeaponSelectActivity extends Activity {
        
        
         
-		arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_single_choice, WeaponArray)
+		arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_single_choice, WeaponArray)
 		{
 
 	        @Override
@@ -67,11 +67,6 @@ public class WeaponSelectActivity extends Activity {
 		weaponsListView.getSelectedItem();
 		
 		weaponsListView.setOnItemClickListener(new OnItemClickListener(){
-
-        	protected void onListItemClick(){
-
-        	//Do stuff
-        	}
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View view, int position,
