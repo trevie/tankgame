@@ -161,10 +161,10 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 		mScene.registerUpdateHandler(mPhysicsWorld); 
 		//SensorManager.GRAVITY_EARTH
 		//parameters are Density, Elasticity, Friction
-		//final FixtureDef WALL_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.0f, 0.0f, 0.0f, false, CATEGORY_SCENERY, MASK_SCENERY, 0);
-		final FixtureDef WALL_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.0f, 0.0f, 0.0f, false, CATEGORY_SCENERY, MASK_SCENERY, (short)0);
-		//final FixtureDef TILE_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.75f, 0.0f, 1.0f);
-		final FixtureDef TILE_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.75f, 0.0f, 1.0f, false, CATEGORY_SCENERY, MASK_SCENERY, (short)0);
+		final FixtureDef WALL_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.0f, 0.0f, 0.0f);
+		//final FixtureDef WALL_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.0f, 0.0f, 0.0f, false, CATEGORY_SCENERY, MASK_SCENERY, (short)0);
+		final FixtureDef TILE_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.75f, 0.0f, 1.0f);
+		//final FixtureDef TILE_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.75f, 0.0f, 1.0f, false, CATEGORY_SCENERY, MASK_SCENERY, (short)0);
 		//FixtureDef TILE_FIXTURE_DEF = PhysicsFactory.createFixtureDef(0.75f, 0.0f, 1.0f, );
 		//TILE_FIXTURE_DEF.filter.
 		final Rectangle ground = new Rectangle(0, Height, Width, 1f, this.getVertexBufferObjectManager());
@@ -382,10 +382,11 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 			{
 				if(isBodyContacted(shellBody, contact))
 				{
+					int weaponForce = GameManager.getInstance().getWeaponForce();
 					Log.w("Shell" , "impacted");
 					ResourceManager.getInstance().mHitSound.play();
-					mExplosion = new AnimatedSprite(shellSprite.getX(), shellSprite.getY(), ResourceManager.getInstance().mExplosionTextureRegion, mEngine.getVertexBufferObjectManager());
-					mExplosion.setScale((float) GameManager.getInstance().getWeaponForce());
+					mExplosion = new AnimatedSprite(shellSprite.getX()-(32*weaponForce), shellSprite.getY()-(32*weaponForce), ResourceManager.getInstance().mExplosionTextureRegion, mEngine.getVertexBufferObjectManager());
+					mExplosion.setScale((float) weaponForce);
 					mExplosion.animate(100, false);
 					// explosion code
 					// destroy tiles
@@ -400,10 +401,17 @@ public class PlayGameActivity extends BaseGameActivity implements IAccelerationL
 								mLevelSprites[i][j] = null;
 							}
 						}
-					// push players
-					// ToDo
-					// damage players
-					// ToDo
+					// Damage and Push Players
+					if(mPlayerSprites[0][0].collidesWith(mExplosion))
+					{
+						GameManager.getInstance().damagePlayer(1, 10 * weaponForce, 2);
+						// Add push code here
+					}
+					if(mPlayerSprites[1][0].collidesWith(mExplosion))
+					{
+						GameManager.getInstance().damagePlayer(2, 10 * weaponForce, 1);
+						// Add psuh code here
+					}
 					mScene.attachChild(mExplosion);
 					BodiesToDestroy.add(shellBody);
 					SpritesToDetach.add(shellSprite);

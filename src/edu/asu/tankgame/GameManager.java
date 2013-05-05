@@ -19,7 +19,7 @@ public class GameManager {
 		
 	public boolean gameOver;
 
-	public static final int maxPlayers = 2;	
+	public static final int maxPlayers = 1;	
 	public static final float initialPlayerHealth = 100;
 	
 	GameManager()
@@ -32,7 +32,7 @@ public class GameManager {
 		for(int i = 1; i <= maxPlayers; i++)
 			playerName[i-1] = "Player" + i;
 		playerScore = new int[maxPlayers];
-		weaponForce = 1;
+		weaponForce = 2;
 		
 		
 		currentPlayer = 0;
